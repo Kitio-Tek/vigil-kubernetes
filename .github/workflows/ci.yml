@@ -28,7 +28,7 @@ jobs:
         uses: golangci/golangci-lint-action@v6
         with:
           version: v1.64.8
-          args: --timeout 5m
+          args: --timeout 5m --allow-parallel-runners
 
   test:
     name: Unit and Integration Tests
@@ -46,7 +46,19 @@ jobs:
         run: go mod download
 
       - name: Run unit tests
-        run: go test ./internal/postgres/... ./internal/patcher/... ./internal/events/... ./internal/metrics/... ./internal/predicates/... ./internal/password/... ./internal/replication/... ./internal/ha/... ./internal/upgrade/... -v -coverprofile=coverage-unit.out
+        run: |
+          go test \
+            ./internal/postgres/... \
+            ./internal/patcher/... \
+            ./internal/events/... \
+            ./internal/metrics/... \
+            ./internal/predicates/... \
+            ./internal/password/... \
+            ./internal/replication/... \
+            ./internal/ha/... \
+            ./internal/upgrade/... \
+            ./api/... \
+            -v -coverprofile=coverage-unit.out
 
       - name: Install setup-envtest
         run: go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
@@ -77,12 +89,14 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: true
 
+      - name: Install controller-gen
+        run: GOBIN=$(pwd)/bin go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.15.0
+
       - name: Generate and verify
         run: |
-          GOBIN=$(pwd)/bin go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.15.0
           export PATH=$PATH:$(pwd)/bin
           make generate manifests
-          git diff --exit-code || (echo "Generated files are out of date, run make generate manifests" && exit 1)
+          git diff --exit-code HEAD || (echo "Generated files are out of date. Run: make generate manifests" && exit 1)
 
       - name: Build binary
         run: go build -o bin/manager ./cmd/main.go
