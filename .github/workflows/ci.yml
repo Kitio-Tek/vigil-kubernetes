@@ -57,6 +57,12 @@ jobs:
             ./internal/replication/... \
             ./internal/ha/... \
             ./internal/upgrade/... \
+            ./internal/certificate/... \
+            ./internal/pgbouncer/... \
+            ./internal/initialize/... \
+            ./internal/workflows/... \
+            ./internal/scheduler/... \
+            ./internal/recovery/... \
             ./api/... \
             -v -coverprofile=coverage-unit.out
 
