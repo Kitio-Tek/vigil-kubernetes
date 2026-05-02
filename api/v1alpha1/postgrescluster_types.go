@@ -96,7 +96,6 @@ type PostgresClusterSpec struct {
 // StorageSpec defines the PVC configuration for the PostgreSQL data volume.
 type StorageSpec struct {
 	// Size of the PVC (e.g. "10Gi").
-	// +kubebuilder:validation:Pattern=`^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$`
 	Size resource.Quantity `json:"size"`
 
 	// StorageClass for the PVC. Uses the cluster default when omitted.
