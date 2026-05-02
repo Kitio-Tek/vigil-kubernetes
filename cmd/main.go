@@ -35,8 +35,8 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil/api/v1alpha1"
-	"github.com/Kitio-Tek/vigil/internal/controller"
+	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
+	"github.com/Kitio-Tek/vigil-kubernetes/internal/controller"
 	// +kubebuilder:scaffold:imports
 )
 

@@ -19,7 +19,7 @@ package postgres
 import (
 	"time"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil/api/v1alpha1"
+	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 

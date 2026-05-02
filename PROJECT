@@ -8,8 +8,8 @@ layout:
 plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
-projectName: vigil
-repo: github.com/Kitio-Tek/vigil
+projectName: vigil-kubernetes
+repo: github.com/Kitio-Tek/vigil-kubernetes
 resources:
 - api:
     crdVersion: v1
@@ -18,7 +18,7 @@ resources:
   domain: vigil.io
   group: pg
   kind: PostgresCluster
-  path: github.com/Kitio-Tek/vigil/api/v1alpha1
+  path: github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
@@ -27,7 +27,7 @@ resources:
   domain: vigil.io
   group: pg
   kind: PostgresBackup
-  path: github.com/Kitio-Tek/vigil/api/v1alpha1
+  path: github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
@@ -36,6 +36,6 @@ resources:
   domain: vigil.io
   group: pg
   kind: PostgresUser
-  path: github.com/Kitio-Tek/vigil/api/v1alpha1
+  path: github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1
   version: v1alpha1
 version: "3"

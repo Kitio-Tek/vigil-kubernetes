@@ -36,8 +36,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil/api/v1alpha1"
-	"github.com/Kitio-Tek/vigil/internal/postgres"
+	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
+	"github.com/Kitio-Tek/vigil-kubernetes/internal/postgres"
 )
 
 //+kubebuilder:rbac:groups=pg.vigil.io,resources=postgresusers,verbs=get;list;watch;create;update;patch;delete

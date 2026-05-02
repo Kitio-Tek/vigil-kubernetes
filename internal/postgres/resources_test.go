@@ -23,8 +23,8 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil/api/v1alpha1"
-	"github.com/Kitio-Tek/vigil/internal/postgres"
+	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
+	"github.com/Kitio-Tek/vigil-kubernetes/internal/postgres"
 )
 
 func newFullCluster() *pgv1alpha1.PostgresCluster {

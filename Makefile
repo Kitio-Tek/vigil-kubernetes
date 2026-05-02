@@ -29,7 +29,7 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 #
 # For example, running 'make bundle-build bundle-push catalog-build catalog-push' will build and push both
 # vigil.io/vigil-bundle:$VERSION and vigil.io/vigil-catalog:$VERSION.
-IMAGE_TAG_BASE ?= vigil.io/vigil
+IMAGE_TAG_BASE ?= vigil.io/vigil-kubernetes
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
@@ -130,8 +130,8 @@ lint-fix: golangci-lint ## Run golangci-lint linter and perform fixes
 ##@ Helm
 
 HELM ?= helm
-HELM_CHART_DIR ?= charts/vigil
-HELM_RELEASE ?= vigil
+HELM_CHART_DIR ?= charts/vigil-kubernetes
+HELM_RELEASE ?= vigil-kubernetes
 HELM_NAMESPACE ?= vigil-system
 
 .PHONY: helm-package
@@ -210,10 +210,10 @@ PLATFORMS ?= linux/arm64,linux/amd64,linux/s390x,linux/ppc64le
 docker-buildx: ## Build and push docker image for the manager for cross-platform support
 	# copy existing Dockerfile and insert --platform=${BUILDPLATFORM} into Dockerfile.cross, and preserve the original Dockerfile
 	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' Dockerfile > Dockerfile.cross
-	- $(CONTAINER_TOOL) buildx create --name vigil-builder
-	$(CONTAINER_TOOL) buildx use vigil-builder
+	- $(CONTAINER_TOOL) buildx create --name vigil-kubernetes-builder
+	$(CONTAINER_TOOL) buildx use vigil-kubernetes-builder
 	- $(CONTAINER_TOOL) buildx build --push --platform=$(PLATFORMS) --tag ${IMG} -f Dockerfile.cross .
-	- $(CONTAINER_TOOL) buildx rm vigil-builder
+	- $(CONTAINER_TOOL) buildx rm vigil-kubernetes-builder
 	rm Dockerfile.cross
 
 .PHONY: build-installer

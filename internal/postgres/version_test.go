@@ -20,7 +20,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Kitio-Tek/vigil/internal/postgres"
+	"github.com/Kitio-Tek/vigil-kubernetes/internal/postgres"
 )
 
 func TestPostgresImageTagKnownVersions(t *testing.T) {

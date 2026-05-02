@@ -29,7 +29,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil/api/v1alpha1"
+	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
 )
 
 var _ = Describe("PostgresBackup Controller", func() {

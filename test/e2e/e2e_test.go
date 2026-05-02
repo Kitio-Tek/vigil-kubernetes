@@ -24,7 +24,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/Kitio-Tek/vigil/test/utils"
+	"github.com/Kitio-Tek/vigil-kubernetes/test/utils"
 )
 
 const namespace = "vigil-system"

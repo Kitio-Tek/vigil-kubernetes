@@ -66,11 +66,11 @@ jobs:
       - name: Set chart version from tag
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          sed -i "s/^version: .*/version: ${VERSION}/" charts/vigil/Chart.yaml
-          sed -i "s/^appVersion: .*/appVersion: \"${VERSION}\"/" charts/vigil/Chart.yaml
+          sed -i "s/^version: .*/version: ${VERSION}/" charts/vigil-kubernetes/Chart.yaml
+          sed -i "s/^appVersion: .*/appVersion: \"${VERSION}\"/" charts/vigil-kubernetes/Chart.yaml
 
       - name: Package Helm chart
-        run: helm package charts/vigil/
+        run: helm package charts/vigil-kubernetes/
 
       - name: Upload Helm chart as release artifact
         uses: actions/upload-artifact@v4

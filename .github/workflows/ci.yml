@@ -112,7 +112,7 @@ jobs:
       - name: Create kind cluster
         uses: helm/kind-action@v1
         with:
-          cluster_name: vigil-e2e
+          cluster_name: vigil-kubernetes-e2e
 
       - name: Install KUTTL
         run: |
@@ -122,8 +122,8 @@ jobs:
 
       - name: Build and load operator image
         run: |
-          docker build -t ghcr.io/kitio-tek/vigil:latest .
-          kind load docker-image ghcr.io/kitio-tek/vigil:latest --name vigil-e2e
+          docker build -t ghcr.io/kitio-tek/vigil-kubernetes:latest .
+          kind load docker-image ghcr.io/kitio-tek/vigil-kubernetes:latest --name vigil-kubernetes-e2e
 
       - name: Install CRDs
         run: |
@@ -134,10 +134,10 @@ jobs:
 
       - name: Deploy operator
         run: |
-          helm install vigil charts/vigil/ \
+          helm install vigil-kubernetes charts/vigil-kubernetes/ \
             --namespace vigil-system \
             --create-namespace \
-            --set image.repository=ghcr.io/kitio-tek/vigil \
+            --set image.repository=ghcr.io/kitio-tek/vigil-kubernetes \
             --set image.tag=latest
 
       - name: Run KUTTL tests

@@ -6,7 +6,7 @@ point-in-time recovery, and TLS encryption.
 
 ## Documentation
 
-Full documentation is available at https://github.com/Kitio-Tek/vigil/wiki.
+Full documentation is available at https://github.com/Kitio-Tek/vigil-kubernetes/wiki.
 
 ## Prerequisites
 
