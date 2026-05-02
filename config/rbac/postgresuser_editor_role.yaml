@@ -1,0 +1,27 @@
+# permissions for end users to edit postgresusers.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: vigil
+    app.kubernetes.io/managed-by: kustomize
+  name: postgresuser-editor-role
+rules:
+- apiGroups:
+  - pg.vigil.io
+  resources:
+  - postgresusers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - pg.vigil.io
+  resources:
+  - postgresusers/status
+  verbs:
+  - get
