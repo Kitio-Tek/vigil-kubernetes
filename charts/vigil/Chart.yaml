@@ -1,0 +1,16 @@
+apiVersion: v2
+name: vigil
+description: A production-grade Kubernetes operator for PostgreSQL
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - postgresql
+  - database
+  - operator
+home: https://github.com/Kitio-Tek/vigil
+sources:
+  - https://github.com/Kitio-Tek/vigil
+maintainers:
+  - name: Kitio-Tek
+    email: kmyriantek@gmail.com

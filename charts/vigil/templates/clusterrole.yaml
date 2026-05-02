@@ -1,0 +1,42 @@
+{{- if .Values.rbac.create -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "vigil.fullname" . }}-manager
+  labels:
+    {{- include "vigil.labels" . | nindent 4 }}
+rules:
+  - apiGroups: ["pg.vigil.io"]
+    resources: ["postgresclusters", "postgresbackups", "postgresusers"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["pg.vigil.io"]
+    resources: ["postgresclusters/status", "postgresbackups/status", "postgresusers/status"]
+    verbs: ["get", "update", "patch"]
+  - apiGroups: ["pg.vigil.io"]
+    resources: ["postgresclusters/finalizers", "postgresbackups/finalizers", "postgresusers/finalizers"]
+    verbs: ["update"]
+  - apiGroups: ["apps"]
+    resources: ["statefulsets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["services", "configmaps", "secrets", "serviceaccounts"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "delete"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+{{- end }}
