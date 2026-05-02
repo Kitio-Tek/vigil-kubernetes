@@ -1,34 +1,38 @@
-# Vigil
+# Vigil Kubernetes
 
-Vigil is a production-grade Kubernetes operator for PostgreSQL. It manages the full lifecycle
-of PostgreSQL clusters on Kubernetes, providing high availability, automated backups,
-point-in-time recovery, and TLS encryption.
+Vigil Kubernetes is a Kubernetes operator for PostgreSQL. It manages the full lifecycle
+of PostgreSQL clusters, providing high availability, automated backups, point-in-time
+recovery, and TLS encryption via Kubernetes-native Custom Resource Definitions.
 
-## Documentation
+## Installation
 
-Full documentation is available at https://github.com/Kitio-Tek/vigil-kubernetes/wiki.
-
-## Prerequisites
+### Prerequisites
 
 - Kubernetes 1.25 or later
 - Helm 3.x
 - kubectl
-
-## Quick Start
 
 ### Installing with Helm
 
 Install the operator into a dedicated namespace:
 
 ```bash
-helm install vigil charts/vigil/ \
+helm install vigil-kubernetes charts/vigil-kubernetes/ \
   --namespace vigil-system \
   --create-namespace
 ```
 
+Verify the operator pod is running:
+
+```bash
+kubectl get pods -n vigil-system
+```
+
+## Configuration
+
 ### Creating a PostgreSQL Cluster
 
-Once the operator is running, apply a PostgresCluster resource:
+Apply a `PostgresCluster` resource:
 
 ```yaml
 apiVersion: pg.vigil.io/v1alpha1
@@ -43,8 +47,6 @@ spec:
     size: 10Gi
 ```
 
-Apply it and check the status:
-
 ```bash
 kubectl apply -f cluster.yaml
 kubectl get pgc -n default
@@ -53,12 +55,10 @@ kubectl describe pgc my-cluster -n default
 
 ### Connecting to the Cluster
 
-Vigil creates two Services per cluster:
+Vigil Kubernetes creates two Services per cluster:
 
 - `<name>-primary` routes write traffic to the current primary
 - `<name>-replicas` routes read traffic across healthy replicas
-
-Connect using any PostgreSQL client:
 
 ```bash
 kubectl run psql --rm -it --image postgres:16-alpine -- \
@@ -98,41 +98,7 @@ spec:
         - UPDATE
 ```
 
-## Features
-
-- Automated PostgreSQL cluster provisioning
-- Primary/replica streaming replication
-- Automated failover
-- Scheduled and on-demand backups (S3, GCS)
-- Point-in-time recovery
-- TLS encryption for client connections
-- Prometheus metrics via postgres_exporter sidecar
-- Database user management via PostgresUser CRD
-- Rolling updates with zero-downtime semantics
-- Pause/resume reconciliation
-- Topology spread constraints and affinity rules
-
-## Architecture
-
-Vigil consists of three reconcilers:
-
-**PostgresCluster** manages StatefulSets, Services, ConfigMaps, and ServiceAccounts
-for each database cluster. Every reconcile cycle drives the cluster toward the desired
-state expressed in the spec, updating the status with the current phase, ready instance
-count, and primary pod name.
-
-**PostgresBackup** manages Kubernetes Jobs that perform physical (pg_basebackup) or
-logical (pg_dump) backups. Backups are immutable once they reach a terminal state
-(Completed or Failed).
-
-**PostgresUser** manages PostgreSQL roles and database-level grants by executing SQL
-directly against the primary instance using the Kubernetes exec API. The Applied status
-field reflects whether the last reconcile succeeded.
-
-Each reconciler sets owner references on all managed resources so that Kubernetes garbage
-collection removes them when the parent CR is deleted.
-
-## Custom Resources
+## API Reference
 
 ### PostgresCluster
 
@@ -166,6 +132,45 @@ collection removes them when the parent CR is deleted.
 | `spec.roles` | []string | PostgreSQL roles to grant |
 | `spec.superuser` | bool | Grant superuser privileges |
 | `spec.connectionLimit` | int32 | Maximum connections (-1 for unlimited) |
+
+## Architecture
+
+Vigil Kubernetes consists of three reconcilers:
+
+**PostgresCluster** manages StatefulSets, Services, ConfigMaps, and ServiceAccounts
+for each database cluster. Every reconcile cycle drives the cluster toward the desired
+state expressed in the spec, updating the status with the current phase, ready instance
+count, and primary pod name.
+
+**PostgresBackup** manages Kubernetes Jobs that perform physical (pg_basebackup) or
+logical (pg_dump) backups. Backups are immutable once they reach a terminal state
+(Completed or Failed).
+
+**PostgresUser** manages PostgreSQL roles and database-level grants by executing SQL
+directly against the primary instance using the Kubernetes exec API. The Applied status
+field reflects whether the last reconcile succeeded.
+
+Each reconciler sets owner references on all managed resources so that Kubernetes garbage
+collection removes them when the parent CR is deleted.
+
+## Features
+
+- Automated PostgreSQL cluster provisioning
+- Primary/replica streaming replication
+- Automated failover
+- Scheduled and on-demand backups (S3, GCS)
+- Point-in-time recovery
+- TLS encryption for client connections
+- Prometheus metrics via postgres_exporter sidecar
+- Database user management via PostgresUser CRD
+- Rolling updates
+- Pause/resume reconciliation
+- Topology spread constraints and affinity rules
+
+## Development
+
+See [DEVELOPER.md](DEVELOPER.md) for local development setup, including how to run the
+operator against a kind cluster and how to run unit and integration tests.
 
 ## Contributing
 
