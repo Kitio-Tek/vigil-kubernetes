@@ -86,7 +86,7 @@ func main() {
 }
 
 func runStatus(clusterName string) error {
-	client, err := newDynamicClient()
+	dynClient, err := newDynamicClient()
 	if err != nil {
 		return fmt.Errorf("building Kubernetes client: %w", err)
 	}
@@ -100,28 +100,28 @@ func runStatus(clusterName string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	obj, err := client.Resource(gvr).Namespace(namespace).Get(ctx, clusterName, metav1.GetOptions{})
+	obj, err := dynClient.Resource(gvr).Namespace(namespace).Get(ctx, clusterName, metav1.GetOptions{})
 	if err != nil {
 		return fmt.Errorf("getting cluster %q in namespace %q: %w", clusterName, namespace, err)
 	}
 
-	spec, _, _ := nestedMap(obj.Object, "spec")
-	status, _, _ := nestedMap(obj.Object, "status")
+	spec := nestedMap(obj.Object, "spec")
+	status := nestedMap(obj.Object, "status")
 
-	phase, _, _ := nestedString(status, "phase")
-	primary, _, _ := nestedString(status, "currentPrimary")
-	ready, _, _ := nestedInt64(status, "readyInstances")
-	instances, _, _ := nestedInt64(spec, "instances")
-	pgVersion, _, _ := nestedInt64(spec, "postgresVersion")
+	phase := nestedString(status, "phase")
+	primary := nestedString(status, "currentPrimary")
+	ready := nestedInt64(status, "readyInstances")
+	instances := nestedInt64(spec, "instances")
+	pgVersion := nestedInt64(spec, "postgresVersion")
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintf(w, "NAME\t%s\n", clusterName)
-	fmt.Fprintf(w, "NAMESPACE\t%s\n", namespace)
-	fmt.Fprintf(w, "PHASE\t%s\n", phase)
-	fmt.Fprintf(w, "PRIMARY\t%s\n", primary)
-	fmt.Fprintf(w, "READY\t%d/%d\n", ready, instances)
-	fmt.Fprintf(w, "POSTGRES\t%d\n", pgVersion)
-	w.Flush()
+	_, _ = fmt.Fprintf(w, "NAME\t%s\n", clusterName)
+	_, _ = fmt.Fprintf(w, "NAMESPACE\t%s\n", namespace)
+	_, _ = fmt.Fprintf(w, "PHASE\t%s\n", phase)
+	_, _ = fmt.Fprintf(w, "PRIMARY\t%s\n", primary)
+	_, _ = fmt.Fprintf(w, "READY\t%d/%d\n", ready, instances)
+	_, _ = fmt.Fprintf(w, "POSTGRES\t%d\n", pgVersion)
+	_ = w.Flush()
 
 	return nil
 }
@@ -162,37 +162,45 @@ func newDynamicClient() (dynamic.Interface, error) {
 	return dynamic.NewForConfig(config)
 }
 
-func nestedMap(obj map[string]interface{}, field string) (map[string]interface{}, bool, error) {
+func nestedMap(obj map[string]interface{}, field string) map[string]interface{} {
+	if obj == nil {
+		return nil
+	}
 	v, ok := obj[field]
 	if !ok {
-		return nil, false, nil
+		return nil
 	}
-	m, ok := v.(map[string]interface{})
-	return m, ok, nil
+	m, _ := v.(map[string]interface{})
+	return m
 }
 
-func nestedString(obj map[string]interface{}, field string) (string, bool, error) {
+func nestedString(obj map[string]interface{}, field string) string {
+	if obj == nil {
+		return ""
+	}
 	v, ok := obj[field]
 	if !ok {
-		return "", false, nil
+		return ""
 	}
-	s, ok := v.(string)
-	return s, ok, nil
+	s, _ := v.(string)
+	return s
 }
 
-func nestedInt64(obj map[string]interface{}, field string) (int64, bool, error) {
+func nestedInt64(obj map[string]interface{}, field string) int64 {
+	if obj == nil {
+		return 0
+	}
 	v, ok := obj[field]
 	if !ok {
-		return 0, false, nil
+		return 0
 	}
 	switch n := v.(type) {
 	case int64:
-		return n, true, nil
+		return n
 	case float64:
-		return int64(n), true, nil
+		return int64(n)
 	case int32:
-		return int64(n), true, nil
+		return int64(n)
 	}
-	return 0, false, nil
+	return 0
 }
-

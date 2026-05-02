@@ -147,7 +147,7 @@ func buildUserSQL(user *pgv1alpha1.PostgresUser, password string) string {
 	if password != "" {
 		sb.WriteString(fmt.Sprintf(" PASSWORD '%s'", strings.ReplaceAll(password, "'", "''")))
 	}
-	sb.WriteString(fmt.Sprintf("; END IF; END $$;\n"))
+	sb.WriteString("; END IF; END $$;\n")
 
 	// ALTER the role to bring it to the desired state (idempotent).
 	sb.WriteString(fmt.Sprintf("ALTER ROLE \"%s\"", name))

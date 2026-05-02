@@ -98,9 +98,9 @@ func MergeWithAutoTune(cluster *pgv1alpha1.PostgresCluster) map[string]string {
 // overridden by the user.
 func RequiredConnectionParams(cluster *pgv1alpha1.PostgresCluster) map[string]string {
 	return map[string]string{
-		"listen_addresses":  "*",
-		"port":              "5432",
-		"max_connections":   fmt.Sprintf("%d", maxConnections(cluster)),
+		"listen_addresses":               "*",
+		"port":                           "5432",
+		"max_connections":                fmt.Sprintf("%d", maxConnections(cluster)),
 		"superuser_reserved_connections": "3",
 	}
 }

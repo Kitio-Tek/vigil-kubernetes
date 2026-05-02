@@ -123,8 +123,8 @@ func TestTarget_Validate_InvalidKind(t *testing.T) {
 
 func TestTarget_Validate_Timeline(t *testing.T) {
 	target := recovery.Target{
-		Kind:      recovery.TargetKindImmediate,
-		Timeline:  "latest",
+		Kind:     recovery.TargetKindImmediate,
+		Timeline: "latest",
 	}
 	if err := target.Validate(); err != nil {
 		t.Errorf("expected valid timeline 'latest', got: %v", err)
