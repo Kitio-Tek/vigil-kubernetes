@@ -34,10 +34,10 @@ import (
 
 var _ = Describe("PostgresBackup Controller", func() {
 	const (
-		backupName  = "test-backup"
-		backupNS    = "default"
-		timeout     = time.Second * 10
-		interval    = time.Millisecond * 250
+		backupName = "test-backup"
+		backupNS   = "default"
+		timeout    = time.Second * 10
+		interval   = time.Millisecond * 250
 	)
 
 	ctx := context.Background()

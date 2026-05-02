@@ -37,8 +37,8 @@ func BuildBackupJob(
 	cluster *pgv1alpha1.PostgresCluster,
 ) *batchv1.Job {
 	backupLabels := map[string]string{
-		LabelCluster:   cluster.Name,
-		LabelManagedBy: OperatorName,
+		LabelCluster:         cluster.Name,
+		LabelManagedBy:       OperatorName,
 		"pg.vigil.io/backup": backup.Name,
 	}
 

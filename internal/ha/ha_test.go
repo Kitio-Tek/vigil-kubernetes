@@ -122,9 +122,9 @@ func TestFailoverTarget(t *testing.T) {
 
 func TestClearFailoverAnnotations(t *testing.T) {
 	annotations := map[string]string{
-		ha.AnnotationFailoverTarget:    "pod-1",
-		ha.AnnotationSwitchoverTarget:  "pod-2",
-		"some.other.annotation":        "value",
+		ha.AnnotationFailoverTarget:   "pod-1",
+		ha.AnnotationSwitchoverTarget: "pod-2",
+		"some.other.annotation":       "value",
 	}
 	result := ha.ClearFailoverAnnotations(annotations)
 	if _, ok := result[ha.AnnotationFailoverTarget]; ok {

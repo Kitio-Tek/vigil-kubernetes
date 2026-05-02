@@ -38,12 +38,12 @@ func TestDefaultParams(t *testing.T) {
 
 func TestMergeParams(t *testing.T) {
 	base := map[string]string{
-		"shared_buffers": "128MB",
+		"shared_buffers":  "128MB",
 		"max_connections": "100",
 	}
 	override := map[string]string{
 		"shared_buffers": "256MB",
-		"work_mem": "8MB",
+		"work_mem":       "8MB",
 	}
 	merged := postgres.MergeParams(base, override)
 

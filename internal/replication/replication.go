@@ -83,11 +83,11 @@ func DefaultWalConfig(pgVersion int32) WalConfig {
 // These parameters are merged into the ConfigMap by the controller.
 func (w WalConfig) Parameters() map[string]string {
 	params := map[string]string{
-		"wal_level":              w.WalLevel,
-		"max_wal_senders":        fmt.Sprintf("%d", w.MaxWalSenders),
-		"max_replication_slots":  fmt.Sprintf("%d", w.MaxReplicationSlots),
-		"hot_standby":            "on",
-		"hot_standby_feedback":   "on",
+		"wal_level":             w.WalLevel,
+		"max_wal_senders":       fmt.Sprintf("%d", w.MaxWalSenders),
+		"max_replication_slots": fmt.Sprintf("%d", w.MaxReplicationSlots),
+		"hot_standby":           "on",
+		"hot_standby_feedback":  "on",
 	}
 	if w.PostgresVersion >= 13 {
 		params["wal_keep_size"] = fmt.Sprintf("%dMB", w.WalKeepSize)

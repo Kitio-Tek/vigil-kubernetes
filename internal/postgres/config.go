@@ -28,22 +28,22 @@ import (
 func DefaultParams() map[string]string {
 	return map[string]string{
 		// Connection settings
-		"listen_addresses":    "'*'",
-		"max_connections":     "100",
-		"port":                "5432",
+		"listen_addresses": "'*'",
+		"max_connections":  "100",
+		"port":             "5432",
 
 		// Memory
-		"shared_buffers":            "128MB",
-		"effective_cache_size":      "512MB",
-		"maintenance_work_mem":      "64MB",
-		"work_mem":                  "4MB",
+		"shared_buffers":       "128MB",
+		"effective_cache_size": "512MB",
+		"maintenance_work_mem": "64MB",
+		"work_mem":             "4MB",
 
 		// Write-ahead log
-		"wal_level":                 "replica",
-		"max_wal_senders":           "10",
-		"max_replication_slots":     "10",
-		"wal_keep_size":             "1GB",
-		"archive_mode":              "off",
+		"wal_level":             "replica",
+		"max_wal_senders":       "10",
+		"max_replication_slots": "10",
+		"wal_keep_size":         "1GB",
+		"archive_mode":          "off",
 
 		// Checkpoints
 		"checkpoint_completion_target": "0.9",
@@ -54,18 +54,18 @@ func DefaultParams() map[string]string {
 		"effective_io_concurrency": "200",
 
 		// Logging
-		"log_destination":          "'stderr'",
-		"logging_collector":        "off",
+		"log_destination":            "'stderr'",
+		"logging_collector":          "off",
 		"log_min_duration_statement": "1000",
-		"log_connections":          "on",
-		"log_disconnections":       "on",
-		"log_line_prefix":          "'%m [%p] %q%u@%d '",
+		"log_connections":            "on",
+		"log_disconnections":         "on",
+		"log_line_prefix":            "'%m [%p] %q%u@%d '",
 
 		// Autovacuum
-		"autovacuum":                    "on",
-		"autovacuum_max_workers":        "3",
-		"autovacuum_naptime":            "1min",
-		"autovacuum_vacuum_scale_factor": "0.1",
+		"autovacuum":                      "on",
+		"autovacuum_max_workers":          "3",
+		"autovacuum_naptime":              "1min",
+		"autovacuum_vacuum_scale_factor":  "0.1",
 		"autovacuum_analyze_scale_factor": "0.05",
 	}
 }

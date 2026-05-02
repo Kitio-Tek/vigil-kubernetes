@@ -65,9 +65,9 @@ func CommonLabels(cluster *pgv1alpha1.PostgresCluster) map[string]string {
 // selector. These labels are immutable after creation.
 func SelectorLabels(cluster *pgv1alpha1.PostgresCluster) map[string]string {
 	return map[string]string{
-		LabelName:    OperatorName,
+		LabelName:     OperatorName,
 		LabelInstance: cluster.Name,
-		LabelCluster: cluster.Name,
+		LabelCluster:  cluster.Name,
 	}
 }
 
