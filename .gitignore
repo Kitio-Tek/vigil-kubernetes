@@ -25,3 +25,16 @@ go.work
 *.swp
 *.swo
 *~
+
+# Helm packaged charts
+*.tgz
+
+# Coverage reports
+cover.out
+coverage*.out
+
+# dist directory produced by build-installer
+dist/
+
+# testenv binaries
+bin/k8s/
