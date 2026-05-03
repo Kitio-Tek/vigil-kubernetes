@@ -74,11 +74,12 @@ jobs:
         run: go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
 
       - name: Download envtest binaries
-        run: setup-envtest use 1.30.0 --bin-dir ./bin/k8s
+        run: setup-envtest use 1.30.0
 
       - name: Run controller integration tests
         run: |
-          export KUBEBUILDER_ASSETS="$(setup-envtest use 1.30.0 --bin-dir ./bin/k8s -p path)"
+          export KUBEBUILDER_ASSETS="$(setup-envtest use 1.30.0 -p path)"
+          test -x "${KUBEBUILDER_ASSETS}/etcd" || (echo "etcd missing under ${KUBEBUILDER_ASSETS}"; ls -la "${KUBEBUILDER_ASSETS}"; exit 1)
           go test ./internal/controller/... -coverprofile=coverage-integration.out
 
       - name: Upload coverage
