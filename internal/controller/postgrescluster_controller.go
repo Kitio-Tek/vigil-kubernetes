@@ -100,6 +100,8 @@ func (r *PostgresClusterReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			if err := r.Status().Update(ctx, cluster); err != nil {
 				return ctrl.Result{}, err
 			}
+			r.recordEventf(cluster, corev1.EventTypeWarning, events.EventReasonPaused,
+				"Reconciliation paused via spec.paused")
 		}
 		log.Info("cluster is paused, skipping reconciliation")
 		return ctrl.Result{}, nil
