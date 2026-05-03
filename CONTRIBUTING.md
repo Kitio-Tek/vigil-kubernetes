@@ -1,6 +1,6 @@
-# Contributing to Vigil
+# Contributing to Athos
 
-Thank you for your interest in contributing to Vigil. The following guidelines
+Thank you for your interest in contributing to Athos. The following guidelines
 explain how to submit issues and pull requests effectively.
 
 ## Code of Conduct
@@ -13,7 +13,7 @@ treat each other with respect.
 Before opening an issue, search the existing issues to see if the problem has
 already been reported. When filing a new issue, include:
 
-- The Vigil version (operator image tag or git SHA)
+- The Athos version (operator image tag or git SHA)
 - The Kubernetes version and platform
 - A minimal reproduction case (ideally a PostgresCluster YAML that demonstrates
   the problem)
@@ -89,5 +89,5 @@ Update the relevant documentation when changing public APIs or operator behaviou
 
 ## License
 
-By contributing to Vigil, you agree that your contributions will be licensed
+By contributing to Athos, you agree that your contributions will be licensed
 under the Apache License, Version 2.0.

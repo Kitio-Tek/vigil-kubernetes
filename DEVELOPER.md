@@ -15,11 +15,11 @@ running tests, and debugging locally.
 ## Repository Structure
 
 ```
-vigil/
+athos/
   api/v1alpha1/           Custom resource type definitions
   cmd/main.go             Operator entry point
   config/                 Kustomize manifests
-  charts/vigil/           Helm chart
+  charts/athos/           Helm chart
   internal/
     controller/           Reconciler implementations
     postgres/             PostgreSQL-specific helpers (naming, config, resources)
@@ -32,8 +32,8 @@ vigil/
 Clone the repository and download dependencies:
 
 ```bash
-git clone git@github.com:Kitio-Tek/vigil.git
-cd vigil
+git clone git@github.com:Kitio-Tek/athos.git
+cd athos
 go mod download
 ```
 
@@ -58,7 +58,7 @@ The binary is written to `bin/manager`.
 To build the container image:
 
 ```bash
-make docker-build IMG=ghcr.io/kitio-tek/vigil:dev
+make docker-build IMG=ghcr.io/kitio-tek/athos:dev
 ```
 
 ## Running the Operator Locally
@@ -107,8 +107,8 @@ Using kind:
 
 ```bash
 make kind-create
-make docker-build IMG=ghcr.io/kitio-tek/vigil:dev
-make kind-load IMG=ghcr.io/kitio-tek/vigil:dev
+make docker-build IMG=ghcr.io/kitio-tek/athos:dev
+make kind-load IMG=ghcr.io/kitio-tek/athos:dev
 make install
 kubectl apply -k config/manager/
 make e2e-test
@@ -155,5 +155,5 @@ git push origin v0.2.0
 ```
 
 The release workflow builds and pushes the container image to
-`ghcr.io/kitio-tek/vigil:<version>` and packages the Helm chart as a GitHub
+`ghcr.io/kitio-tek/athos:<version>` and packages the Helm chart as a GitHub
 release artifact.

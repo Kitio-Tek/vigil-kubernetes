@@ -1,6 +1,6 @@
-# Vigil Kubernetes
+# Athos Kubernetes
 
-Vigil Kubernetes is a Kubernetes operator for PostgreSQL. It manages the full lifecycle
+Athos Kubernetes is a Kubernetes operator for PostgreSQL. It manages the full lifecycle
 of PostgreSQL clusters, providing high availability, automated backups, point-in-time
 recovery, and TLS encryption via Kubernetes-native Custom Resource Definitions.
 
@@ -17,15 +17,15 @@ recovery, and TLS encryption via Kubernetes-native Custom Resource Definitions.
 Install the operator into a dedicated namespace:
 
 ```bash
-helm install vigil-kubernetes charts/vigil-kubernetes/ \
-  --namespace vigil-system \
+helm install athos-kubernetes charts/athos-kubernetes/ \
+  --namespace athos-system \
   --create-namespace
 ```
 
 Verify the operator pod is running:
 
 ```bash
-kubectl get pods -n vigil-system
+kubectl get pods -n athos-system
 ```
 
 ## Configuration
@@ -35,7 +35,7 @@ kubectl get pods -n vigil-system
 Apply a `PostgresCluster` resource:
 
 ```yaml
-apiVersion: pg.vigil.io/v1alpha1
+apiVersion: pg.athos.io/v1alpha1
 kind: PostgresCluster
 metadata:
   name: my-cluster
@@ -55,7 +55,7 @@ kubectl describe pgc my-cluster -n default
 
 ### Connecting to the Cluster
 
-Vigil Kubernetes creates two Services per cluster:
+Athos Kubernetes creates two Services per cluster:
 
 - `<name>-primary` routes write traffic to the current primary
 - `<name>-replicas` routes read traffic across healthy replicas
@@ -68,7 +68,7 @@ kubectl run psql --rm -it --image postgres:16-alpine -- \
 ### Taking a Backup
 
 ```yaml
-apiVersion: pg.vigil.io/v1alpha1
+apiVersion: pg.athos.io/v1alpha1
 kind: PostgresBackup
 metadata:
   name: my-backup
@@ -81,7 +81,7 @@ spec:
 ### Managing Database Users
 
 ```yaml
-apiVersion: pg.vigil.io/v1alpha1
+apiVersion: pg.athos.io/v1alpha1
 kind: PostgresUser
 metadata:
   name: app-user
@@ -135,7 +135,7 @@ spec:
 
 ## Architecture
 
-Vigil Kubernetes consists of three reconcilers:
+Athos Kubernetes consists of three reconcilers:
 
 **PostgresCluster** manages StatefulSets, Services, ConfigMaps, and ServiceAccounts
 for each database cluster. Every reconcile cycle drives the cluster toward the desired
