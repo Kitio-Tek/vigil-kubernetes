@@ -1,4 +1,4 @@
-apiVersion: pg.vigil.io/v1alpha1
+apiVersion: pg.athos.io/v1alpha1
 kind: PostgresUser
 metadata:
   name: e2e-app-user

@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vigil-controller-manager
-  namespace: vigil-system
+  name: athos-controller-manager
+  namespace: athos-system
 status:
   availableReplicas: 1
   readyReplicas: 1

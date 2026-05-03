@@ -7,4 +7,4 @@ parallel: 1
 skipDelete: false
 startKIND: false
 kindContainers:
-  - ghcr.io/kitio-tek/vigil:latest
+  - ghcr.io/kitio-tek/athos:latest

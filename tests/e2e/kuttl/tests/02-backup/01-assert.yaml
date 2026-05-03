@@ -3,4 +3,4 @@ kind: Job
 metadata:
   namespace: default
   labels:
-    pg.vigil.io/backup: e2e-backup
+    pg.athos.io/backup: e2e-backup
