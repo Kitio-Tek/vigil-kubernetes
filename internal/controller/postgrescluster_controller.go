@@ -23,6 +23,7 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	policyv1 "k8s.io/api/policy/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -37,6 +38,7 @@ import (
 	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
 	"github.com/Kitio-Tek/athos-kubernetes/internal/events"
 	"github.com/Kitio-Tek/athos-kubernetes/internal/password"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/pdb"
 	"github.com/Kitio-Tek/athos-kubernetes/internal/postgres"
 )
 
@@ -51,6 +53,7 @@ import (
 //+kubebuilder:rbac:groups=core,resources=persistentvolumeclaims,verbs=get;list;watch;delete
 //+kubebuilder:rbac:groups=core,resources=serviceaccounts,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=core,resources=events,verbs=create;patch
+//+kubebuilder:rbac:groups=policy,resources=poddisruptionbudgets,verbs=get;list;watch;create;update;patch;delete
 
 // PostgresClusterReconciler reconciles a PostgresCluster object.
 type PostgresClusterReconciler struct {
@@ -145,6 +148,10 @@ func (r *PostgresClusterReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	if err := r.reconcileServices(ctx, cluster); err != nil {
 		return ctrl.Result{}, fmt.Errorf("reconcile services: %w", err)
+	}
+
+	if err := r.reconcilePDB(ctx, cluster); err != nil {
+		return ctrl.Result{}, fmt.Errorf("reconcile pdb: %w", err)
 	}
 
 	if err := r.updateStatus(ctx, cluster); err != nil {
@@ -334,6 +341,43 @@ func (r *PostgresClusterReconciler) reconcileServices(
 	return nil
 }
 
+// reconcilePDB ensures a PodDisruptionBudget protects the cluster pods
+// during voluntary disruptions. The recommended sizing depends on the
+// configured instance count: clusters with three or more pods get a
+// MinAvailable=N-1 guard, smaller clusters get MaxUnavailable=1.
+func (r *PostgresClusterReconciler) reconcilePDB(
+	ctx context.Context,
+	cluster *pgv1alpha1.PostgresCluster,
+) error {
+	spec := pdb.RecommendedFor(
+		cluster.Name+"-pdb",
+		cluster.Namespace,
+		int(cluster.Spec.Instances),
+		postgres.SelectorLabels(cluster),
+		postgres.CommonLabels(cluster),
+	)
+	desired := pdb.Build(spec)
+	if err := controllerutil.SetControllerReference(cluster, desired, r.Scheme); err != nil {
+		return err
+	}
+
+	existing := &policyv1.PodDisruptionBudget{}
+	err := r.Get(ctx, types.NamespacedName{Name: desired.Name, Namespace: desired.Namespace}, existing)
+	if errors.IsNotFound(err) {
+		if err := r.Create(ctx, desired); err != nil {
+			return err
+		}
+		r.recordEventf(cluster, corev1.EventTypeNormal, events.EventReasonCreated,
+			"Created PodDisruptionBudget %q", desired.Name)
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	existing.Spec = desired.Spec
+	return r.Update(ctx, existing)
+}
+
 // updateStatus refreshes the PostgresCluster status based on the current
 // StatefulSet state.
 func (r *PostgresClusterReconciler) updateStatus(
@@ -401,6 +445,7 @@ func (r *PostgresClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Owns(&corev1.ConfigMap{}).
 		Owns(&corev1.ServiceAccount{}).
 		Owns(&corev1.Secret{}).
+		Owns(&policyv1.PodDisruptionBudget{}).
 		WithOptions(controller.Options{MaxConcurrentReconciles: 2}).
 		Complete(r)
 }
