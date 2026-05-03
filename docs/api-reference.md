@@ -1,10 +1,10 @@
 # API Reference
 
-This document describes all custom resource definitions (CRDs) provided by Vigil.
+This document describes all custom resource definitions (CRDs) provided by Athos.
 
 ## Groups and Versions
 
-All Vigil resources belong to the `pg.vigil.io/v1alpha1` API group.
+All Athos resources belong to the `pg.athos.io/v1alpha1` API group.
 
 ---
 
