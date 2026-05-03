@@ -25,6 +25,7 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	policyv1 "k8s.io/api/policy/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -182,6 +183,23 @@ var _ = Describe("PostgresCluster Controller", func() {
 
 			Expect(svc.OwnerReferences).NotTo(BeEmpty())
 			Expect(svc.OwnerReferences[0].Kind).To(Equal("PostgresCluster"))
+		})
+	})
+
+	Describe("PodDisruptionBudget management", func() {
+		It("should create a PodDisruptionBudget on first reconcile", func() {
+			doReconcile()
+
+			pdb := &policyv1.PodDisruptionBudget{}
+			Eventually(func() error {
+				return k8sClient.Get(ctx, types.NamespacedName{
+					Name:      clusterName + "-pdb",
+					Namespace: namespace,
+				}, pdb)
+			}, timeout, interval).Should(Succeed())
+
+			Expect(pdb.Spec.Selector).NotTo(BeNil())
+			Expect(pdb.OwnerReferences).NotTo(BeEmpty())
 		})
 	})
 
