@@ -55,14 +55,24 @@ kubectl describe pgc my-cluster -n default
 
 ### Connecting to the Cluster
 
-Athos Kubernetes creates two Services per cluster:
+Athos Kubernetes creates three Services per cluster:
 
 - `<name>-primary` routes write traffic to the current primary
 - `<name>-replicas` routes read traffic across healthy replicas
+- `<name>-pods` is a headless Service used for in-cluster DNS resolution
+  of individual instances
+
+The operator generates a Secret named `<name>-credentials` containing the
+superuser password and a libpq URI. Read it with `kubectl get secret`:
 
 ```bash
-kubectl run psql --rm -it --image postgres:16-alpine -- \
-  psql -h my-cluster-primary.default.svc.cluster.local -U postgres
+PGPASSWORD=$(kubectl get secret my-cluster-credentials \
+  -o jsonpath='{.data.password}' | base64 -d)
+
+kubectl run psql --rm -i --restart=Never \
+  --image postgres:16-alpine \
+  --env PGPASSWORD="$PGPASSWORD" \
+  -- psql -h my-cluster-primary -U postgres -d postgres -c 'SELECT version();'
 ```
 
 ### Taking a Backup
