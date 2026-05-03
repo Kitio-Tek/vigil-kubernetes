@@ -1,4 +1,4 @@
-module github.com/Kitio-Tek/vigil-kubernetes
+module github.com/Kitio-Tek/athos-kubernetes
 
 go 1.22.0
 
