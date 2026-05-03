@@ -6,10 +6,25 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-05-03
+
 ### Added
 
-- `internal/cronexpr` is now wired into the PostgresCluster admission
-  webhook for stricter backup-schedule validation.
+- `LICENSE` Apache-2.0 file at the repository root.
+- `CHANGELOG.md` following Keep-a-Changelog conventions.
+- README badges for CI, latest release, Go report card, license.
+- `internal/sidecar` builders for the postgres-exporter metrics
+  container and a wal-g WAL uploader container.
+- `internal/storageclass` PVC template builder and expansion checks.
+- `internal/resourcerequests` CPU / memory defaults plus a Merge helper.
+- `internal/poolerconfig` renderer for `pgbouncer.ini` and
+  `userlist.txt`.
+
+### Changed
+
+- The PostgresCluster admission webhook now validates
+  `spec.backup.schedule` via `internal/cronexpr` instead of an inline
+  regex.
 
 ## [0.5.0] - 2026-05-03
 
@@ -102,7 +117,8 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - Helm chart `charts/athos-kubernetes` bundling CRDs, RBAC and the
   Deployment manifest.
 
-[Unreleased]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.2.0...v0.3.0
