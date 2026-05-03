@@ -6,6 +6,47 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-04
+
+### Security
+
+- Hardened `internal/userstate.Plan` and the PostgresUser controller's
+  `buildUserSQL` against SQL injection: every identifier is escaped via
+  `internal/sqlescape.Identifier`, every string literal via
+  `StringLiteral`, and identifier validity is enforced before any
+  interpolation. Rejects passwords containing NUL bytes.
+- Whitelisted the SQL privileges accepted by `buildUserSQL` so a
+  malformed CRD value cannot smuggle SQL fragments through the
+  `Databases[].Privileges` field.
+- Redacted `PASSWORD '<value>'` literals from psql stderr before they
+  surface in Kubernetes Conditions or operator logs.
+- Cluster pods now run with a non-root SecurityContext (`RunAsUser=999`,
+  `RunAsGroup=999`, `FSGroup=999`, `RuntimeDefault` seccomp). The
+  postgres container drops every Linux capability and forbids
+  privilege escalation.
+
+### Added
+
+- Dependabot config covering `gomod`, `github-actions`, and `docker`
+  ecosystems, with grouped PRs for kubernetes, controller-runtime,
+  and ginkgo families.
+- Auto-merge workflow that approves and squash-merges Dependabot
+  patch / minor PRs and comments on major bumps.
+- PR template and issue templates under `.github/`.
+- `make security` and `make govulncheck` targets, plus a Security CI
+  job that runs `govulncheck` on every push.
+- Cluster reconciler now emits Kubernetes Events on credentials
+  Secret / ConfigMap / StatefulSet creation and on scale operations,
+  and a Warning event when reconciliation is paused.
+- `PodDisruptionBudget` reconciliation tied to the cluster, with
+  HA-aware sizing.
+
+### Changed
+
+- CI Go toolchain bumped from 1.24.2 to 1.25.1 to clear the stdlib
+  advisories surfaced by govulncheck.
+- Lint CI step now runs `make verify-fmt` before `golangci-lint`.
+
 ## [0.6.0] - 2026-05-03
 
 ### Added
@@ -117,7 +158,8 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - Helm chart `charts/athos-kubernetes` bundling CRDs, RBAC and the
   Deployment manifest.
 
-[Unreleased]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.3.0...v0.4.0
