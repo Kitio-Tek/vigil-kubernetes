@@ -28,8 +28,8 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 # This variable is used to construct full image tags for bundle and catalog images.
 #
 # For example, running 'make bundle-build bundle-push catalog-build catalog-push' will build and push both
-# vigil.io/vigil-bundle:$VERSION and vigil.io/vigil-catalog:$VERSION.
-IMAGE_TAG_BASE ?= vigil.io/vigil-kubernetes
+# athos.io/athos-bundle:$VERSION and athos.io/athos-catalog:$VERSION.
+IMAGE_TAG_BASE ?= athos.io/athos-kubernetes
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
@@ -130,29 +130,29 @@ lint-fix: golangci-lint ## Run golangci-lint linter and perform fixes
 ##@ Helm
 
 HELM ?= helm
-HELM_CHART_DIR ?= charts/vigil-kubernetes
-HELM_RELEASE ?= vigil-kubernetes
-HELM_NAMESPACE ?= vigil-system
+HELM_CHART_DIR ?= charts/athos-kubernetes
+HELM_RELEASE ?= athos-kubernetes
+HELM_NAMESPACE ?= athos-system
 
 .PHONY: helm-package
-helm-package: ## Package the Vigil Helm chart into a .tgz archive.
+helm-package: ## Package the Athos Helm chart into a .tgz archive.
 	$(HELM) package $(HELM_CHART_DIR)
 
 .PHONY: helm-install
-helm-install: ## Install the Vigil operator using Helm (development convenience target).
+helm-install: ## Install the Athos operator using Helm (development convenience target).
 	$(HELM) upgrade --install $(HELM_RELEASE) $(HELM_CHART_DIR) \
 		--namespace $(HELM_NAMESPACE) \
 		--create-namespace \
 		--set image.tag=dev
 
 .PHONY: helm-uninstall
-helm-uninstall: ## Uninstall the Vigil Helm release.
+helm-uninstall: ## Uninstall the Athos Helm release.
 	$(HELM) uninstall $(HELM_RELEASE) --namespace $(HELM_NAMESPACE)
 
 ##@ Kind
 
 KIND ?= kind
-KIND_CLUSTER_NAME ?= vigil-dev
+KIND_CLUSTER_NAME ?= athos-dev
 
 .PHONY: kind-create
 kind-create: ## Create a local kind cluster for development.
@@ -210,10 +210,10 @@ PLATFORMS ?= linux/arm64,linux/amd64,linux/s390x,linux/ppc64le
 docker-buildx: ## Build and push docker image for the manager for cross-platform support
 	# copy existing Dockerfile and insert --platform=${BUILDPLATFORM} into Dockerfile.cross, and preserve the original Dockerfile
 	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' Dockerfile > Dockerfile.cross
-	- $(CONTAINER_TOOL) buildx create --name vigil-kubernetes-builder
-	$(CONTAINER_TOOL) buildx use vigil-kubernetes-builder
+	- $(CONTAINER_TOOL) buildx create --name athos-kubernetes-builder
+	$(CONTAINER_TOOL) buildx use athos-kubernetes-builder
 	- $(CONTAINER_TOOL) buildx build --push --platform=$(PLATFORMS) --tag ${IMG} -f Dockerfile.cross .
-	- $(CONTAINER_TOOL) buildx rm vigil-kubernetes-builder
+	- $(CONTAINER_TOOL) buildx rm athos-kubernetes-builder
 	rm Dockerfile.cross
 
 .PHONY: build-installer
