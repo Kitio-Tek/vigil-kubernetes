@@ -34,6 +34,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/password"
 	"github.com/Kitio-Tek/athos-kubernetes/internal/postgres"
 )
 
@@ -113,6 +114,10 @@ func (r *PostgresClusterReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		return ctrl.Result{}, fmt.Errorf("reconcile serviceaccount: %w", err)
 	}
 
+	if err := r.reconcileCredentials(ctx, cluster); err != nil {
+		return ctrl.Result{}, fmt.Errorf("reconcile credentials: %w", err)
+	}
+
 	if err := r.reconcileConfigMap(ctx, cluster); err != nil {
 		return ctrl.Result{}, fmt.Errorf("reconcile configmap: %w", err)
 	}
@@ -171,6 +176,37 @@ func (r *PostgresClusterReconciler) reconcileServiceAccount(
 		return r.Create(ctx, desired)
 	}
 	return err
+}
+
+// reconcileCredentials ensures the operator-managed credentials Secret
+// exists. The Secret is created once with a freshly generated password and
+// is left untouched on subsequent reconciles so user-driven password
+// rotation is preserved.
+func (r *PostgresClusterReconciler) reconcileCredentials(
+	ctx context.Context,
+	cluster *pgv1alpha1.PostgresCluster,
+) error {
+	existing := &corev1.Secret{}
+	err := r.Get(ctx, types.NamespacedName{
+		Name:      postgres.SecretName(cluster),
+		Namespace: cluster.Namespace,
+	}, existing)
+	if err == nil {
+		return nil
+	}
+	if !errors.IsNotFound(err) {
+		return err
+	}
+
+	pw, err := password.DefaultGenerator().Generate()
+	if err != nil {
+		return fmt.Errorf("generate password: %w", err)
+	}
+	desired := postgres.BuildCredentialSecret(cluster, pw)
+	if err := controllerutil.SetControllerReference(cluster, desired, r.Scheme); err != nil {
+		return err
+	}
+	return r.Create(ctx, desired)
 }
 
 // reconcileConfigMap ensures the postgresql.conf / pg_hba.conf ConfigMap is
