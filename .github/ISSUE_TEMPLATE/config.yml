@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Operator SDK reference
+    url: https://sdk.operatorframework.io/docs/building-operators/golang/
+    about: General questions about operator-sdk patterns are best answered upstream.
+  - name: Helm chart usage questions
+    url: https://github.com/Kitio-Tek/athos-kubernetes/discussions
+    about: For "how do I" questions about installing or operating Athos, please open a discussion.
