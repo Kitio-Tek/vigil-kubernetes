@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -262,11 +263,22 @@ func (r *PostgresUserReconciler) execSQL(
 		Stdout: &stdout,
 		Stderr: &stderr,
 	}); err != nil {
-		return fmt.Errorf("exec sql: %w (stderr: %s)", err, stderr.String())
+		return fmt.Errorf("exec sql: %w (stderr: %s)", err, redactPassword(stderr.String()))
 	}
 
 	return nil
 }
+
+// redactPassword replaces every PASSWORD '<value>' literal in s with
+// PASSWORD '[REDACTED]'. The function is used when surfacing psql stderr
+// into Kubernetes Conditions and Events because psql echoes the failing
+// statement, which on a CREATE/ALTER USER failure would include the
+// caller's plaintext password.
+func redactPassword(s string) string {
+	return passwordLiteralRe.ReplaceAllString(s, "PASSWORD '[REDACTED]'")
+}
+
+var passwordLiteralRe = regexp.MustCompile(`PASSWORD\s+'[^']*'`)
 
 // SetupWithManager registers the user controller with the manager.
 func (r *PostgresUserReconciler) SetupWithManager(mgr ctrl.Manager) error {
