@@ -41,6 +41,8 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/tools/clientcmd"
+
+	"github.com/Kitio-Tek/athos-kubernetes/internal/version"
 )
 
 var (
@@ -127,9 +129,12 @@ func runStatus(clusterName string) error {
 }
 
 func runVersion() {
-	fmt.Printf("kubectl-athos version 0.1.0\n")
-	fmt.Printf("  PostgreSQL operator: Athos Kubernetes\n")
-	fmt.Printf("  API group:           pg.athos.io/v1alpha1\n")
+	info := version.Info()
+	fmt.Printf("kubectl-athos %s (%s, built %s)\n", info.Version, info.Commit, info.BuildDate)
+	fmt.Printf("  Go:        %s\n", info.GoVersion)
+	fmt.Printf("  Platform:  %s\n", info.Platform)
+	fmt.Printf("  Operator:  Athos Kubernetes\n")
+	fmt.Printf("  API:       pg.athos.io/v1alpha1\n")
 }
 
 func printUsage() {

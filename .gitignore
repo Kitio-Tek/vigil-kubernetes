@@ -39,8 +39,8 @@ dist/
 # testenv binaries
 bin/k8s/
 
-# Standalone built plugin binary (kubectl-vigil) — produced by `make build-plugin`.
-plugin
+# Standalone built plugin binary (kubectl-athos) — produced by `make build-plugin`.
+/plugin
 
 # AI assistant scratch directories — never committed.
 .claude/
