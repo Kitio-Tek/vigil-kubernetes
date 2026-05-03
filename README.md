@@ -1,5 +1,10 @@
 # Athos Kubernetes
 
+[![CI](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/Kitio-Tek/athos-kubernetes?sort=semver)](https://github.com/Kitio-Tek/athos-kubernetes/releases)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Kitio-Tek/athos-kubernetes)](https://goreportcard.com/report/github.com/Kitio-Tek/athos-kubernetes)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+
 Athos Kubernetes is a Kubernetes operator for PostgreSQL. It manages the full lifecycle
 of PostgreSQL clusters, providing high availability, automated backups, point-in-time
 recovery, and TLS encryption via Kubernetes-native Custom Resource Definitions.
