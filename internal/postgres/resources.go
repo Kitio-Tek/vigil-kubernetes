@@ -50,11 +50,21 @@ func BuildStatefulSet(cluster *pgv1alpha1.PostgresCluster) *appsv1.StatefulSet {
 		LabelRole: RolePrimary,
 	})
 
-	// Build the PostgreSQL container.
+	// Build the PostgreSQL container. The security context drops every
+	// Linux capability and forbids privilege escalation; the postgres
+	// process does not need any of them. Filesystem-write access is
+	// retained because the postgres image touches /tmp at startup.
+	allowPrivEsc := false
 	pgContainer := corev1.Container{
 		Name:            "postgres",
 		Image:           image,
 		ImagePullPolicy: corev1.PullIfNotPresent,
+		SecurityContext: &corev1.SecurityContext{
+			AllowPrivilegeEscalation: &allowPrivEsc,
+			Capabilities: &corev1.Capabilities{
+				Drop: []corev1.Capability{"ALL"},
+			},
+		},
 		Ports: []corev1.ContainerPort{
 			{
 				Name:          "postgres",
@@ -167,6 +177,14 @@ func BuildStatefulSet(cluster *pgv1alpha1.PostgresCluster) *appsv1.StatefulSet {
 		})
 	}
 
+	// PostgreSQL containers must not run as root and the upstream image
+	// expects UID 999 / GID 999 (postgres user) for /var/lib/postgresql.
+	// FSGroup ensures mounted PVCs are owned by the postgres group so the
+	// process can write its data directory without an init container.
+	runAsNonRoot := true
+	runAsUser := int64(999)
+	runAsGroup := int64(999)
+	fsGroup := int64(999)
 	podSpec := corev1.PodSpec{
 		ServiceAccountName:            saName,
 		Containers:                    containers,
@@ -176,6 +194,15 @@ func BuildStatefulSet(cluster *pgv1alpha1.PostgresCluster) *appsv1.StatefulSet {
 		ImagePullSecrets:              cluster.Spec.ImagePullSecrets,
 		PriorityClassName:             cluster.Spec.PriorityClassName,
 		TerminationGracePeriodSeconds: int64Ptr(30),
+		SecurityContext: &corev1.PodSecurityContext{
+			RunAsNonRoot: &runAsNonRoot,
+			RunAsUser:    &runAsUser,
+			RunAsGroup:   &runAsGroup,
+			FSGroup:      &fsGroup,
+			SeccompProfile: &corev1.SeccompProfile{
+				Type: corev1.SeccompProfileTypeRuntimeDefault,
+			},
+		},
 		Volumes: []corev1.Volume{
 			{
 				Name: ConfigVolumeName,
