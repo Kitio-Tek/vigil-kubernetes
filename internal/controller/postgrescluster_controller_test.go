@@ -185,6 +185,45 @@ var _ = Describe("PostgresCluster Controller", func() {
 		})
 	})
 
+	Describe("Credentials secret management", func() {
+		It("should create the credentials Secret on first reconcile", func() {
+			doReconcile()
+
+			secret := &corev1.Secret{}
+			Eventually(func() error {
+				return k8sClient.Get(ctx, types.NamespacedName{
+					Name:      postgres.SecretName(newCluster()),
+					Namespace: namespace,
+				}, secret)
+			}, timeout, interval).Should(Succeed())
+
+			Expect(secret.Data).To(HaveKey(postgres.CredentialKeyPassword))
+			Expect(secret.Data).To(HaveKey(postgres.CredentialKeyURI))
+			Expect(secret.OwnerReferences).NotTo(BeEmpty())
+		})
+
+		It("should not regenerate the password on subsequent reconciles", func() {
+			doReconcile()
+
+			secret := &corev1.Secret{}
+			Eventually(func() error {
+				return k8sClient.Get(ctx, types.NamespacedName{
+					Name:      postgres.SecretName(newCluster()),
+					Namespace: namespace,
+				}, secret)
+			}, timeout, interval).Should(Succeed())
+			firstPassword := string(secret.Data[postgres.CredentialKeyPassword])
+			Expect(firstPassword).NotTo(BeEmpty())
+
+			doReconcile()
+			Expect(k8sClient.Get(ctx, types.NamespacedName{
+				Name:      postgres.SecretName(newCluster()),
+				Namespace: namespace,
+			}, secret)).To(Succeed())
+			Expect(string(secret.Data[postgres.CredentialKeyPassword])).To(Equal(firstPassword))
+		})
+	})
+
 	Describe("ConfigMap management", func() {
 		It("should create ConfigMap with postgresql.conf content", func() {
 			doReconcile()
