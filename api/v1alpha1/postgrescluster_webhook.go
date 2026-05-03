@@ -18,7 +18,6 @@ package v1alpha1
 
 import (
 	"fmt"
-	"regexp"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -28,6 +27,8 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
+
+	"github.com/Kitio-Tek/athos-kubernetes/internal/cronexpr"
 )
 
 var postgresclusterlog = logf.Log.WithName("postgrescluster-webhook")
@@ -177,21 +178,14 @@ func (r *PostgresCluster) validateBackup() field.ErrorList {
 	if b == nil || !b.Enabled {
 		return errs
 	}
-	if b.Schedule != "" && !isValidCron(b.Schedule) {
-		errs = append(errs, field.Invalid(
-			field.NewPath("spec", "backup", "schedule"),
-			b.Schedule,
-			"must be a valid 5-field cron expression",
-		))
+	if b.Schedule != "" {
+		if err := cronexpr.Validate(b.Schedule); err != nil {
+			errs = append(errs, field.Invalid(
+				field.NewPath("spec", "backup", "schedule"),
+				b.Schedule,
+				err.Error(),
+			))
+		}
 	}
 	return errs
-}
-
-// cronPattern is a basic 5-field cron expression validator.
-var cronPattern = regexp.MustCompile(
-	`^(\*|[0-9,\-/]+)\s+(\*|[0-9,\-/]+)\s+(\*|[0-9,\-/]+)\s+(\*|[0-9,\-/]+)\s+(\*|[0-9,\-/]+)$`,
-)
-
-func isValidCron(expr string) bool {
-	return cronPattern.MatchString(expr)
 }
