@@ -106,6 +106,20 @@ generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and
 fmt: ## Run go fmt against code.
 	go fmt ./...
 
+.PHONY: verify-fmt
+verify-fmt: ## Fail if any file is not gofmt-clean.
+	@unformatted=$$(gofmt -l $$(find . -type f -name '*.go' -not -path './bin/*' -not -path './vendor/*')); \
+	if [ -n "$$unformatted" ]; then \
+		echo "The following files are not gofmt-clean:"; \
+		echo "$$unformatted"; \
+		echo "Run 'make fmt' to fix."; \
+		exit 1; \
+	fi
+
+.PHONY: pre-commit
+pre-commit: fmt vet verify-fmt ## Apply formatters and verify gofmt cleanliness.
+	@echo "pre-commit checks passed"
+
 .PHONY: vet
 vet: ## Run go vet against code.
 	go vet ./...
