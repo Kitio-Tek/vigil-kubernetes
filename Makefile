@@ -180,9 +180,16 @@ run-local: install run ## Install CRDs and run the operator locally.
 
 ##@ Build
 
+VERSION_PKG = github.com/Kitio-Tek/athos-kubernetes/internal/version
+GIT_COMMIT  ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
+BUILD_DATE  ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+LDFLAGS = -X '$(VERSION_PKG).Version=v$(VERSION)' \
+          -X '$(VERSION_PKG).Commit=$(GIT_COMMIT)' \
+          -X '$(VERSION_PKG).BuildDate=$(BUILD_DATE)'
+
 .PHONY: build
 build: manifests generate fmt vet ## Build manager binary.
-	go build -o bin/manager cmd/main.go
+	go build -ldflags "$(LDFLAGS)" -o bin/manager cmd/main.go
 
 .PHONY: run
 run: manifests generate fmt vet ## Run a controller from your host.
