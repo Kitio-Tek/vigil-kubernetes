@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 // Package network provides helpers for building Kubernetes NetworkPolicy and
-// Service resources for PostgreSQL clusters managed by the Vigil operator.
+// Service resources for PostgreSQL clusters managed by the Athos operator.
 package network
 
 import (
@@ -24,8 +24,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/postgres"
+	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/postgres"
 )
 
 const (
@@ -109,7 +109,7 @@ func PoolerNetworkPolicy(cluster *pgv1alpha1.PostgresCluster) *networkingv1.Netw
 			PodSelector: metav1.LabelSelector{
 				MatchLabels: map[string]string{
 					"app.kubernetes.io/component": "pooler",
-					"pg.vigil.io/cluster":         cluster.Name,
+					"pg.athos.io/cluster":         cluster.Name,
 				},
 			},
 			PolicyTypes: []networkingv1.PolicyType{
@@ -173,7 +173,7 @@ func ReadWriteServiceName(clusterName string) string {
 }
 
 // ReadWriteService builds a ClusterIP Service that points to the primary pod
-// via the "pg.vigil.io/role=primary" label selector.
+// via the "pg.athos.io/role=primary" label selector.
 func ReadWriteService(cluster *pgv1alpha1.PostgresCluster) *corev1.Service {
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
@@ -206,7 +206,7 @@ func ReadOnlyServiceName(clusterName string) string {
 }
 
 // ReadOnlyService builds a ClusterIP Service that points to replica pods via
-// the "pg.vigil.io/role=replica" label selector.
+// the "pg.athos.io/role=replica" label selector.
 func ReadOnlyService(cluster *pgv1alpha1.PostgresCluster) *corev1.Service {
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{

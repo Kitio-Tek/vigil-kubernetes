@@ -20,7 +20,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/store"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/store"
 )
 
 func TestDefaultConnParams_Fields(t *testing.T) {

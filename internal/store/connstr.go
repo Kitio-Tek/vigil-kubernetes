@@ -16,7 +16,7 @@ limitations under the License.
 
 // Package store provides utilities for constructing and parsing PostgreSQL
 // connection strings (libpq keyword/value format and URI format) used
-// throughout the Vigil operator.
+// throughout the Athos operator.
 package store
 
 import (

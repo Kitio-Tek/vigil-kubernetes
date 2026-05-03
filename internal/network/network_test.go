@@ -22,8 +22,8 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/network"
+	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/network"
 )
 
 const testClusterName = "mypg"
@@ -109,7 +109,7 @@ func TestAnyServiceName(t *testing.T) {
 func TestReadWriteService_SelectsPrimary(t *testing.T) {
 	c := newCluster()
 	svc := network.ReadWriteService(c)
-	if svc.Spec.Selector["pg.vigil.io/role"] != "primary" {
+	if svc.Spec.Selector["pg.athos.io/role"] != "primary" {
 		t.Errorf("read-write service selector should target role=primary, got %v", svc.Spec.Selector)
 	}
 }
@@ -117,7 +117,7 @@ func TestReadWriteService_SelectsPrimary(t *testing.T) {
 func TestReadOnlyService_SelectsReplica(t *testing.T) {
 	c := newCluster()
 	svc := network.ReadOnlyService(c)
-	if svc.Spec.Selector["pg.vigil.io/role"] != "replica" {
+	if svc.Spec.Selector["pg.athos.io/role"] != "replica" {
 		t.Errorf("read-only service selector should target role=replica, got %v", svc.Spec.Selector)
 	}
 }
@@ -125,7 +125,7 @@ func TestReadOnlyService_SelectsReplica(t *testing.T) {
 func TestAnyService_SelectsAny(t *testing.T) {
 	c := newCluster()
 	svc := network.AnyService(c)
-	if _, ok := svc.Spec.Selector["pg.vigil.io/cluster"]; !ok {
+	if _, ok := svc.Spec.Selector["pg.athos.io/cluster"]; !ok {
 		t.Errorf("any service selector should include cluster label, got %v", svc.Spec.Selector)
 	}
 }

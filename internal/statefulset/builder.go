@@ -25,8 +25,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/postgres"
+	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/postgres"
 )
 
 const (
@@ -52,7 +52,7 @@ const (
 	ScriptsVolumeName = "pgscripts"
 
 	// ScriptsMountPath is where operator scripts are mounted.
-	ScriptsMountPath = "/usr/local/bin/vigil"
+	ScriptsMountPath = "/usr/local/bin/athos"
 
 	// CertVolumeName holds TLS certificates when TLS is enabled.
 	CertVolumeName = "pgcerts"
