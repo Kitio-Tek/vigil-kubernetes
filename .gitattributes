@@ -1,0 +1,19 @@
+# Treat kubebuilder/operator-sdk generated YAML manifests as generated so they
+# are excluded from GitHub's language statistics. The bytes here come from
+# tooling, not hand-written code.
+config/crd/bases/**     linguist-generated=true
+config/rbac/role.yaml   linguist-generated=true
+config/webhook/**       linguist-generated=true
+
+# Helm chart CRD copies are kept in sync with the kubebuilder manifests by the
+# Makefile target `make crds-to-helm`. They are derived files.
+charts/**/templates/crds/**   linguist-generated=true
+
+# zz_generated_*.go files are produced by controller-gen.
+**/zz_generated_*.go    linguist-generated=true
+
+# Vendored Go modules are not part of the project's own code.
+vendor/**               linguist-vendored=true
+
+# Treat go.sum as documentation rather than code; the file is a hash database.
+go.sum                  linguist-generated=true
