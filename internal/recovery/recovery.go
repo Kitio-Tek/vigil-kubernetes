@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 // Package recovery implements point-in-time recovery (PITR) configuration
-// and target validation for the Vigil operator. It generates the
+// and target validation for the Athos operator. It generates the
 // postgresql.auto.conf recovery parameters and validates user-supplied PITR
 // targets before a restore operation begins.
 package recovery
@@ -136,13 +136,13 @@ func (t Target) RecoveryParams() map[string]string {
 // StandbySignalContent returns the content for the standby.signal file, which
 // must exist alongside postgresql.auto.conf in PostgreSQL 12+.
 func StandbySignalContent() string {
-	return "# standby.signal - managed by vigil-kubernetes\n"
+	return "# standby.signal - managed by athos-kubernetes\n"
 }
 
 // RecoverySignalContent returns the content for the recovery.signal file used
 // to trigger a PITR restore in PostgreSQL 12+.
 func RecoverySignalContent() string {
-	return "# recovery.signal - managed by vigil-kubernetes\n"
+	return "# recovery.signal - managed by athos-kubernetes\n"
 }
 
 // ParseTime parses a recovery target time string in PostgreSQL timestamp format.

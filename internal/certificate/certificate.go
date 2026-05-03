@@ -70,7 +70,7 @@ func GenerateCA(clusterName string, duration time.Duration) (*KeyPair, error) {
 		SerialNumber: serial,
 		Subject: pkix.Name{
 			CommonName:   clusterName + CACommonNameSuffix,
-			Organization: []string{"vigil-kubernetes"},
+			Organization: []string{"athos-kubernetes"},
 		},
 		NotBefore:             time.Now().Add(-time.Minute),
 		NotAfter:              time.Now().Add(duration),
@@ -110,7 +110,7 @@ func GenerateServerCert(clusterName string, sans []string, ca *KeyPair, duration
 		SerialNumber: serial,
 		Subject: pkix.Name{
 			CommonName:   clusterName + ServerCommonNameSuffix,
-			Organization: []string{"vigil-kubernetes"},
+			Organization: []string{"athos-kubernetes"},
 		},
 		DNSNames:  sans,
 		NotBefore: time.Now().Add(-time.Minute),

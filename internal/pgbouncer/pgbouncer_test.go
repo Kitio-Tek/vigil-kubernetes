@@ -20,7 +20,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/pgbouncer"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/pgbouncer"
 )
 
 func TestDefaultConfig(t *testing.T) {

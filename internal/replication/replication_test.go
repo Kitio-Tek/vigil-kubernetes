@@ -20,7 +20,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/replication"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/replication"
 )
 
 func TestDefaultWalConfig(t *testing.T) {

@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 // Package predicates provides controller-runtime event predicates used by
-// Vigil controllers to filter reconcile triggers and reduce unnecessary work.
+// Athos controllers to filter reconcile triggers and reduce unnecessary work.
 package predicates
 
 import (
@@ -90,11 +90,11 @@ func LabelChangedOrGeneration() predicate.Predicate {
 }
 
 // NotPaused returns a predicate that blocks all events when the object carries
-// the vigil.io/paused=true annotation. Controllers that honour the annotation
+// the athos.io/paused=true annotation. Controllers that honour the annotation
 // should use this predicate to skip reconciliation entirely.
 func NotPaused() predicate.Predicate {
 	const (
-		pausedAnnotation = "pg.vigil.io/paused"
+		pausedAnnotation = "pg.athos.io/paused"
 		pausedValue      = "true"
 	)
 	return predicate.Funcs{
@@ -114,11 +114,11 @@ func NotPaused() predicate.Predicate {
 }
 
 // OwnedByCluster returns a predicate that passes only when the object carries a
-// pg.vigil.io/cluster label matching the given cluster name. Use this when
+// pg.athos.io/cluster label matching the given cluster name. Use this when
 // watching secondary resources (Services, Secrets) to avoid triggering
 // reconciliation for resources belonging to a different cluster.
 func OwnedByCluster(clusterName string) predicate.Predicate {
-	const clusterLabel = "pg.vigil.io/cluster"
+	const clusterLabel = "pg.athos.io/cluster"
 	return predicate.Funcs{
 		UpdateFunc: func(e event.UpdateEvent) bool {
 			return e.ObjectNew.GetLabels()[clusterLabel] == clusterName

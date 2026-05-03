@@ -21,7 +21,7 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus/testutil"
 
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/metrics"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/metrics"
 )
 
 func TestRecordReconcile(t *testing.T) {

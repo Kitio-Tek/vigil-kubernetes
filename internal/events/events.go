@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 // Package events provides typed Kubernetes event constants and helpers for the
-// Vigil operator. All event reasons are defined here to enforce consistency
+// Athos operator. All event reasons are defined here to enforce consistency
 // across controllers.
 package events
 

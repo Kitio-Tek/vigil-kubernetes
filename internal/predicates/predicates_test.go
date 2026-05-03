@@ -23,7 +23,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/predicates"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/predicates"
 )
 
 func podWithMeta(generation int64, labels, annotations map[string]string) *corev1.Pod {
@@ -102,7 +102,7 @@ func TestAnnotationChangedOrGeneration_NoChange(t *testing.T) {
 func TestNotPaused_PausedAnnotation(t *testing.T) {
 	p := predicates.NotPaused()
 
-	paused := podWithMeta(1, nil, map[string]string{"pg.vigil.io/paused": "true"})
+	paused := podWithMeta(1, nil, map[string]string{"pg.athos.io/paused": "true"})
 	active := podWithMeta(1, nil, nil)
 
 	if p.Create(event.CreateEvent{Object: paused}) {
@@ -115,7 +115,7 @@ func TestNotPaused_PausedAnnotation(t *testing.T) {
 
 func TestNotPaused_DeleteAlwaysPasses(t *testing.T) {
 	p := predicates.NotPaused()
-	paused := podWithMeta(1, nil, map[string]string{"pg.vigil.io/paused": "true"})
+	paused := podWithMeta(1, nil, map[string]string{"pg.athos.io/paused": "true"})
 
 	if !p.Delete(event.DeleteEvent{Object: paused}) {
 		t.Error("delete events should always pass NotPaused")
@@ -125,8 +125,8 @@ func TestNotPaused_DeleteAlwaysPasses(t *testing.T) {
 func TestOwnedByCluster(t *testing.T) {
 	p := predicates.OwnedByCluster("mycluster")
 
-	owned := podWithMeta(1, map[string]string{"pg.vigil.io/cluster": "mycluster"}, nil)
-	other := podWithMeta(1, map[string]string{"pg.vigil.io/cluster": "othercluster"}, nil)
+	owned := podWithMeta(1, map[string]string{"pg.athos.io/cluster": "mycluster"}, nil)
+	other := podWithMeta(1, map[string]string{"pg.athos.io/cluster": "othercluster"}, nil)
 
 	if !p.Create(event.CreateEvent{Object: owned}) {
 		t.Error("expected owned object to pass")

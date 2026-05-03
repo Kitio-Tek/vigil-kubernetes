@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 // Package scheduler provides cron-expression parsing and next-run calculation
-// for backup and maintenance scheduling within the Vigil operator. It is
+// for backup and maintenance scheduling within the Athos operator. It is
 // intentionally lightweight and avoids importing a full cron library.
 package scheduler
 

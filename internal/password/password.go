@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 // Package password provides cryptographically secure password and token
-// generation for PostgreSQL credentials managed by the Vigil operator.
+// generation for PostgreSQL credentials managed by the Athos operator.
 package password
 
 import (

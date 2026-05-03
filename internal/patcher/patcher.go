@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 // Package patcher provides utilities for server-side apply and merge patching
-// of Kubernetes objects managed by the vigil-kubernetes operator.
+// of Kubernetes objects managed by the athos-kubernetes operator.
 package patcher
 
 import (

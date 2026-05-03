@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 // Package replication provides helpers for configuring PostgreSQL streaming
-// replication within a Vigil-managed cluster. It generates recovery.conf
+// replication within a Athos-managed cluster. It generates recovery.conf
 // (PostgreSQL < 12) and postgresql.auto.conf fragments (PostgreSQL >= 12) as
 // well as standby.signal file content.
 package replication
@@ -129,7 +129,7 @@ func (s StandbyConfig) PrimaryConnInfo() string {
 // standby.signal file; for older versions it is written to recovery.conf.
 func (s StandbyConfig) RecoveryConfig() string {
 	var b strings.Builder
-	b.WriteString("# Managed by vigil-kubernetes - do not edit\n")
+	b.WriteString("# Managed by athos-kubernetes - do not edit\n")
 	b.WriteString(fmt.Sprintf("primary_conninfo = '%s'\n", s.PrimaryConnInfo()))
 	b.WriteString("restore_command = ''\n")
 	b.WriteString("recovery_target_timeline = 'latest'\n")

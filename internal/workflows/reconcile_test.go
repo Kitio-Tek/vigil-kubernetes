@@ -20,7 +20,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/workflows"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/workflows"
 )
 
 func TestDone(t *testing.T) {

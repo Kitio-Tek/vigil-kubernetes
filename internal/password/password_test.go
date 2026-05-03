@@ -21,7 +21,7 @@ import (
 	"testing"
 	"unicode"
 
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/password"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/password"
 )
 
 func TestDefaultGenerator(t *testing.T) {

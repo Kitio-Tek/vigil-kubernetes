@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package ha implements high-availability logic for the Vigil operator. It
+// Package ha implements high-availability logic for the Athos operator. It
 // provides helpers for determining cluster topology, validating failover
 // eligibility, and producing the annotations used to trigger switchovers.
 package ha
@@ -22,27 +22,27 @@ package ha
 import (
 	"fmt"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
+	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
 )
 
 const (
 	// AnnotationFailoverTarget is the annotation set by an operator or user to
 	// request a manual failover to a specific pod.
-	AnnotationFailoverTarget = "pg.vigil.io/failover-target"
+	AnnotationFailoverTarget = "pg.athos.io/failover-target"
 
 	// AnnotationSwitchoverTarget is the annotation set to request a planned
 	// switchover to a specific pod (graceful, with data sync).
-	AnnotationSwitchoverTarget = "pg.vigil.io/switchover-target"
+	AnnotationSwitchoverTarget = "pg.athos.io/switchover-target"
 
 	// AnnotationCurrentPrimary records the pod name of the current primary.
-	AnnotationCurrentPrimary = "pg.vigil.io/current-primary"
+	AnnotationCurrentPrimary = "pg.athos.io/current-primary"
 
 	// AnnotationPromoteWithoutDataSync allows promoting a replica without
 	// waiting for full data synchronisation. Use only in disaster scenarios.
-	AnnotationPromoteWithoutDataSync = "pg.vigil.io/promote-without-data-sync"
+	AnnotationPromoteWithoutDataSync = "pg.athos.io/promote-without-data-sync"
 
 	// LabelRole is the label used to identify the role of a pod.
-	LabelRole = "pg.vigil.io/role"
+	LabelRole = "pg.athos.io/role"
 
 	// RolePrimary identifies the primary pod.
 	RolePrimary = "primary"

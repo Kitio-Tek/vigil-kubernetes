@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package upgrade contains the version upgrade logic for the Vigil operator.
+// Package upgrade contains the version upgrade logic for the Athos operator.
 // It supports in-place minor-version upgrades (image tag bumps) and validates
 // major version upgrade paths before triggering a pg_upgrade Job.
 package upgrade
@@ -22,7 +22,7 @@ package upgrade
 import (
 	"fmt"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
+	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
 )
 
 const (
@@ -34,11 +34,11 @@ const (
 
 	// AnnotationUpgradeApproved is set by an operator/user to approve a major
 	// version upgrade. The operator will not start a major upgrade without it.
-	AnnotationUpgradeApproved = "pg.vigil.io/upgrade-approved"
+	AnnotationUpgradeApproved = "pg.athos.io/upgrade-approved"
 
 	// LabelUpgradeInProgress is set on the cluster while a major upgrade job is
 	// running, to prevent concurrent reconcile from modifying the StatefulSet.
-	LabelUpgradeInProgress = "pg.vigil.io/upgrade-in-progress"
+	LabelUpgradeInProgress = "pg.athos.io/upgrade-in-progress"
 )
 
 // Kind classifies an upgrade request.

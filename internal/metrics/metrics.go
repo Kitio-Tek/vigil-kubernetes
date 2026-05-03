@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package metrics registers Prometheus metrics for the Vigil operator and
+// Package metrics registers Prometheus metrics for the Athos operator and
 // provides helpers for recording reconcile, upgrade, and backup events.
 package metrics
 
@@ -27,7 +27,7 @@ var (
 	// ReconcileTotal counts reconcile loop invocations per controller and result.
 	ReconcileTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Namespace: "vigil",
+			Namespace: "athos",
 			Subsystem: "controller",
 			Name:      "reconcile_total",
 			Help:      "Total number of reconcile loop invocations per controller and result.",
@@ -38,7 +38,7 @@ var (
 	// ReconcileDuration observes the duration of each reconcile loop.
 	ReconcileDuration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Namespace: "vigil",
+			Namespace: "athos",
 			Subsystem: "controller",
 			Name:      "reconcile_duration_seconds",
 			Help:      "Duration of reconcile loop invocations in seconds.",
@@ -50,7 +50,7 @@ var (
 	// ClustersTotal tracks the number of PostgresCluster objects by phase.
 	ClustersTotal = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Namespace: "vigil",
+			Namespace: "athos",
 			Subsystem: "cluster",
 			Name:      "total",
 			Help:      "Number of PostgresCluster objects managed by this operator, by phase.",
@@ -61,7 +61,7 @@ var (
 	// InstancesReady tracks ready PostgreSQL instances across all clusters.
 	InstancesReady = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Namespace: "vigil",
+			Namespace: "athos",
 			Subsystem: "cluster",
 			Name:      "instances_ready",
 			Help:      "Number of ready PostgreSQL instances per cluster.",
@@ -72,7 +72,7 @@ var (
 	// BackupsTotal counts backup attempts per cluster and status.
 	BackupsTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Namespace: "vigil",
+			Namespace: "athos",
 			Subsystem: "backup",
 			Name:      "total",
 			Help:      "Total backup attempts per cluster and terminal status.",
@@ -83,7 +83,7 @@ var (
 	// BackupDuration observes how long backup jobs take.
 	BackupDuration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Namespace: "vigil",
+			Namespace: "athos",
 			Subsystem: "backup",
 			Name:      "duration_seconds",
 			Help:      "Duration of backup jobs in seconds.",
@@ -95,7 +95,7 @@ var (
 	// UpgradesTotal counts upgrade attempts by outcome.
 	UpgradesTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Namespace: "vigil",
+			Namespace: "athos",
 			Subsystem: "upgrade",
 			Name:      "total",
 			Help:      "Total PostgreSQL version upgrade attempts and outcomes.",
@@ -106,7 +106,7 @@ var (
 	// FailoversTotal counts failover events by trigger type.
 	FailoversTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Namespace: "vigil",
+			Namespace: "athos",
 			Subsystem: "ha",
 			Name:      "failovers_total",
 			Help:      "Total failover events by trigger type (manual, automatic).",
@@ -117,7 +117,7 @@ var (
 	// PasswordRotationsTotal counts secret rotation events.
 	PasswordRotationsTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Namespace: "vigil",
+			Namespace: "athos",
 			Subsystem: "security",
 			Name:      "password_rotations_total",
 			Help:      "Total password rotation events.",

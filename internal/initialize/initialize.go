@@ -118,7 +118,7 @@ func (p InitParams) BootstrapScript() string {
 func (p InitParams) PostInitSQL(password string) string {
 	var b strings.Builder
 
-	b.WriteString("-- Managed by vigil-kubernetes - do not edit\n\n")
+	b.WriteString("-- Managed by athos-kubernetes - do not edit\n\n")
 
 	b.WriteString(fmt.Sprintf(
 		"CREATE USER %s WITH REPLICATION ENCRYPTED PASSWORD %s;\n",

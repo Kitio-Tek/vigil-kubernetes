@@ -20,7 +20,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/scheduler"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/scheduler"
 )
 
 func TestParse_ValidExpressions(t *testing.T) {

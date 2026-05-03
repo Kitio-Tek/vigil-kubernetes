@@ -21,7 +21,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/certificate"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/certificate"
 )
 
 func TestGenerateCA(t *testing.T) {

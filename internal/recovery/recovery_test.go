@@ -20,7 +20,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/recovery"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/recovery"
 )
 
 func pastTime(d time.Duration) time.Time {
