@@ -28,10 +28,10 @@ import (
 // needs. The controller code maps real corev1.Pods into this shape before
 // calling Plan.
 type Pod struct {
-	Name        string
-	Ordinal     int
-	IsPrimary   bool
-	HealthyOK   bool
+	Name           string
+	Ordinal        int
+	IsPrimary      bool
+	HealthyOK      bool
 	OnDesiredImage bool
 }
 

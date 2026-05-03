@@ -72,14 +72,14 @@ func TestQualifiedIdentifier_Empty(t *testing.T) {
 
 func TestIsValidIdentifier(t *testing.T) {
 	cases := map[string]bool{
-		"users":                true,
-		"_users":               true,
-		"User1":                true,
-		"weird$name":           true,
-		"123start":             false,
-		"":                     false,
-		"with space":           false,
-		"good-name":            false,
+		"users":                 true,
+		"_users":                true,
+		"User1":                 true,
+		"weird$name":            true,
+		"123start":              false,
+		"":                      false,
+		"with space":            false,
+		"good-name":             false,
 		strings.Repeat("a", 63): true,
 		strings.Repeat("a", 64): false,
 	}

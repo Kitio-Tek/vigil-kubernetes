@@ -58,11 +58,11 @@ func TestConfigPath(t *testing.T) {
 
 func TestIsInsidePGData(t *testing.T) {
 	cases := map[string]bool{
-		datadir.PGData:                   true,
-		datadir.PGData + "/base":         true,
-		datadir.PGData + "/../escape":    false,
-		"/etc/postgresql":                false,
-		"/var/lib/postgresql/wal":        false,
+		datadir.PGData:                true,
+		datadir.PGData + "/base":      true,
+		datadir.PGData + "/../escape": false,
+		"/etc/postgresql":             false,
+		"/var/lib/postgresql/wal":     false,
 	}
 	for path, want := range cases {
 		if got := datadir.IsInsidePGData(path); got != want {

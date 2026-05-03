@@ -28,20 +28,20 @@ import (
 // Named ports for the cluster. Names are reused across container ports,
 // service ports and probe targets so they stay in sync.
 const (
-	PostgresPortName        = "postgres"
-	PostgresPort     int32  = 5432
+	PostgresPortName       = "postgres"
+	PostgresPort     int32 = 5432
 
-	PgBouncerPortName        = "pgbouncer"
-	PgBouncerPort     int32  = 6432
+	PgBouncerPortName       = "pgbouncer"
+	PgBouncerPort     int32 = 6432
 
-	MetricsPortName        = "metrics"
-	MetricsPort     int32  = 9187
+	MetricsPortName       = "metrics"
+	MetricsPort     int32 = 9187
 
-	ManagerMetricsPortName        = "manager-metrics"
-	ManagerMetricsPort     int32  = 8443
+	ManagerMetricsPortName       = "manager-metrics"
+	ManagerMetricsPort     int32 = 8443
 
-	ManagerHealthPortName        = "health"
-	ManagerHealthPort     int32  = 8081
+	ManagerHealthPortName       = "health"
+	ManagerHealthPort     int32 = 8081
 )
 
 // Port pairs a name and a numeric port together for use in ports lists.
