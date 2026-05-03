@@ -56,7 +56,7 @@ func DefaultHBAConf(tlsEnabled bool) []string {
 // The provided rules are appended after the standard header comment.
 func BuildHBAConf(rules []string, tlsEnabled bool) string {
 	var sb strings.Builder
-	sb.WriteString("# Managed by Vigil. Do not edit manually.\n")
+	sb.WriteString("# Managed by Athos. Do not edit manually.\n")
 	sb.WriteString("# TYPE  DATABASE        USER            ADDRESS                 METHOD\n")
 
 	base := DefaultHBAConf(tlsEnabled)

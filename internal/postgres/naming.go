@@ -19,7 +19,7 @@ package postgres
 import (
 	"fmt"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
+	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
 )
 
 // ClusterStatefulSetName returns the name of the StatefulSet for a cluster.

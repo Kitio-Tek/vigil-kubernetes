@@ -19,14 +19,14 @@ package postgres
 import (
 	"fmt"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
+	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
 )
 
 const (
 	// LabelCluster identifies the PostgresCluster a resource belongs to.
-	LabelCluster = "pg.vigil.io/cluster"
+	LabelCluster = "pg.athos.io/cluster"
 	// LabelRole distinguishes primary from replica pods.
-	LabelRole = "pg.vigil.io/role"
+	LabelRole = "pg.athos.io/role"
 	// LabelManagedBy identifies the operator managing a resource.
 	LabelManagedBy = "app.kubernetes.io/managed-by"
 	// LabelComponent identifies the functional component of a resource.
@@ -36,7 +36,7 @@ const (
 	// LabelInstance is the unique instance identifier label.
 	LabelInstance = "app.kubernetes.io/instance"
 	// LabelVersion labels the PostgreSQL major version.
-	LabelVersion = "pg.vigil.io/postgres-version"
+	LabelVersion = "pg.athos.io/postgres-version"
 
 	// RolePrimary is the value used in LabelRole for the primary pod.
 	RolePrimary = "primary"
@@ -44,7 +44,7 @@ const (
 	RoleReplica = "replica"
 
 	// OperatorName is the canonical name of this operator.
-	OperatorName = "vigil"
+	OperatorName = "athos"
 )
 
 // CommonLabels returns the standard set of labels applied to every resource

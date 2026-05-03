@@ -19,7 +19,7 @@ package postgres_test
 import (
 	"testing"
 
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/postgres"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/postgres"
 )
 
 const testClusterName = "mycluster"

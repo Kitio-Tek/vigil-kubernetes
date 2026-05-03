@@ -17,7 +17,7 @@ limitations under the License.
 package postgres
 
 import (
-	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
+	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -39,7 +39,7 @@ func BuildBackupJob(
 	backupLabels := map[string]string{
 		LabelCluster:         cluster.Name,
 		LabelManagedBy:       OperatorName,
-		"pg.vigil.io/backup": backup.Name,
+		"pg.athos.io/backup": backup.Name,
 	}
 
 	image := PostgresImageTag(cluster.Spec.PostgresVersion)

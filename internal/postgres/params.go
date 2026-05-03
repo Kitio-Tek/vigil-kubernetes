@@ -19,7 +19,7 @@ package postgres
 import (
 	"fmt"
 
-	pgv1alpha1 "github.com/Kitio-Tek/vigil-kubernetes/api/v1alpha1"
+	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
 	"k8s.io/apimachinery/pkg/api/resource"
 )
 

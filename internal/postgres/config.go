@@ -87,7 +87,7 @@ func MergeParams(base, override map[string]string) map[string]string {
 // string. Parameters are written in alphabetical order for deterministic output.
 func BuildPostgresConf(params map[string]string) string {
 	var sb strings.Builder
-	sb.WriteString("# Managed by Vigil. Do not edit manually.\n")
+	sb.WriteString("# Managed by Athos. Do not edit manually.\n")
 
 	keys := make([]string, 0, len(params))
 	for k := range params {

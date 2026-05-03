@@ -20,7 +20,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Kitio-Tek/vigil-kubernetes/internal/postgres"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/postgres"
 )
 
 func TestDefaultHBAConfTLSEnabled(t *testing.T) {
