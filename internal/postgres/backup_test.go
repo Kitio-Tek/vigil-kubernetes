@@ -27,24 +27,26 @@ import (
 	"github.com/Kitio-Tek/vigil-kubernetes/internal/postgres"
 )
 
-func newTestBackup(name, clusterName string, method pgv1alpha1.BackupMethod) *pgv1alpha1.PostgresBackup {
+const testBackupClusterName = "my-cluster"
+
+func newTestBackup(name string, method pgv1alpha1.BackupMethod) *pgv1alpha1.PostgresBackup {
 	return &pgv1alpha1.PostgresBackup{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
 			Namespace: "default",
 		},
 		Spec: pgv1alpha1.PostgresBackupSpec{
-			ClusterName: clusterName,
+			ClusterName: testBackupClusterName,
 			Method:      method,
 			Online:      true,
 		},
 	}
 }
 
-func newTestClusterForBackup(name string) *pgv1alpha1.PostgresCluster {
+func newTestClusterForBackup() *pgv1alpha1.PostgresCluster {
 	return &pgv1alpha1.PostgresCluster{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      name,
+			Name:      testBackupClusterName,
 			Namespace: "default",
 		},
 		Spec: pgv1alpha1.PostgresClusterSpec{
@@ -58,8 +60,8 @@ func newTestClusterForBackup(name string) *pgv1alpha1.PostgresCluster {
 }
 
 func TestBuildBackupJobBaseBackup(t *testing.T) {
-	backup := newTestBackup("my-backup", "my-cluster", pgv1alpha1.BackupMethodBaseBackup)
-	cluster := newTestClusterForBackup("my-cluster")
+	backup := newTestBackup("my-backup", pgv1alpha1.BackupMethodBaseBackup)
+	cluster := newTestClusterForBackup()
 
 	job := postgres.BuildBackupJob(backup, cluster)
 
@@ -80,8 +82,8 @@ func TestBuildBackupJobBaseBackup(t *testing.T) {
 }
 
 func TestBuildBackupJobPgDump(t *testing.T) {
-	backup := newTestBackup("my-dump", "my-cluster", pgv1alpha1.BackupMethodPgDump)
-	cluster := newTestClusterForBackup("my-cluster")
+	backup := newTestBackup("my-dump", pgv1alpha1.BackupMethodPgDump)
+	cluster := newTestClusterForBackup()
 
 	job := postgres.BuildBackupJob(backup, cluster)
 
@@ -92,8 +94,8 @@ func TestBuildBackupJobPgDump(t *testing.T) {
 }
 
 func TestBuildBackupJobLabels(t *testing.T) {
-	backup := newTestBackup("my-backup", "my-cluster", pgv1alpha1.BackupMethodBaseBackup)
-	cluster := newTestClusterForBackup("my-cluster")
+	backup := newTestBackup("my-backup", pgv1alpha1.BackupMethodBaseBackup)
+	cluster := newTestClusterForBackup()
 
 	job := postgres.BuildBackupJob(backup, cluster)
 
@@ -108,8 +110,8 @@ func TestBuildBackupJobLabels(t *testing.T) {
 }
 
 func TestBuildBackupJobRestartPolicy(t *testing.T) {
-	backup := newTestBackup("my-backup", "my-cluster", pgv1alpha1.BackupMethodBaseBackup)
-	cluster := newTestClusterForBackup("my-cluster")
+	backup := newTestBackup("my-backup", pgv1alpha1.BackupMethodBaseBackup)
+	cluster := newTestClusterForBackup()
 
 	job := postgres.BuildBackupJob(backup, cluster)
 
@@ -120,8 +122,8 @@ func TestBuildBackupJobRestartPolicy(t *testing.T) {
 }
 
 func TestBuildBackupJobPGPASSWORDEnv(t *testing.T) {
-	backup := newTestBackup("my-backup", "my-cluster", pgv1alpha1.BackupMethodBaseBackup)
-	cluster := newTestClusterForBackup("my-cluster")
+	backup := newTestBackup("my-backup", pgv1alpha1.BackupMethodBaseBackup)
+	cluster := newTestClusterForBackup()
 
 	job := postgres.BuildBackupJob(backup, cluster)
 	container := job.Spec.Template.Spec.Containers[0]
