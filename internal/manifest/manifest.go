@@ -74,11 +74,7 @@ func Split(r io.Reader) ([]Document, error) {
 }
 
 func isDocumentSeparator(line string) bool {
-	trimmed := strings.TrimSpace(line)
-	if trimmed != "---" {
-		return false
-	}
-	return true
+	return strings.TrimSpace(line) == "---"
 }
 
 // Join concatenates the documents back into a single YAML stream with `---`
