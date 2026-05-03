@@ -1,11 +1,11 @@
-Vigil PostgreSQL Operator {{ .Chart.AppVersion }} has been installed in namespace {{ .Release.Namespace }}.
+Athos PostgreSQL Operator {{ .Chart.AppVersion }} has been installed in namespace {{ .Release.Namespace }}.
 
 The operator is watching all namespaces for PostgresCluster, PostgresBackup, and PostgresUser resources.
 
 To create your first PostgreSQL cluster, apply a PostgresCluster resource:
 
   kubectl apply -f - <<EOF
-  apiVersion: pg.vigil.io/v1alpha1
+  apiVersion: pg.athos.io/v1alpha1
   kind: PostgresCluster
   metadata:
     name: my-cluster
@@ -21,4 +21,4 @@ Check cluster status:
 
   kubectl get pgc -n default
 
-Full documentation: https://github.com/Kitio-Tek/vigil-kubernetes
+Full documentation: https://github.com/Kitio-Tek/athos-kubernetes

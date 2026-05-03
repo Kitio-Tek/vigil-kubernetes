@@ -1,5 +1,5 @@
 apiVersion: v2
-name: vigil
+name: athos
 description: A production-grade Kubernetes operator for PostgreSQL
 type: application
 version: 0.1.0
@@ -8,7 +8,7 @@ keywords:
   - postgresql
   - database
   - operator
-home: https://github.com/Kitio-Tek/vigil-kubernetes
+home: https://github.com/Kitio-Tek/athos-kubernetes
 sources:
-  - https://github.com/Kitio-Tek/vigil-kubernetes
+  - https://github.com/Kitio-Tek/athos-kubernetes
 

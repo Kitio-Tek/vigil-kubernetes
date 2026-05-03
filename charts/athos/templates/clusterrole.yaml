@@ -2,17 +2,17 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "vigil.fullname" . }}-manager
+  name: {{ include "athos.fullname" . }}-manager
   labels:
-    {{- include "vigil.labels" . | nindent 4 }}
+    {{- include "athos.labels" . | nindent 4 }}
 rules:
-  - apiGroups: ["pg.vigil.io"]
+  - apiGroups: ["pg.athos.io"]
     resources: ["postgresclusters", "postgresbackups", "postgresusers"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-  - apiGroups: ["pg.vigil.io"]
+  - apiGroups: ["pg.athos.io"]
     resources: ["postgresclusters/status", "postgresbackups/status", "postgresusers/status"]
     verbs: ["get", "update", "patch"]
-  - apiGroups: ["pg.vigil.io"]
+  - apiGroups: ["pg.athos.io"]
     resources: ["postgresclusters/finalizers", "postgresbackups/finalizers", "postgresusers/finalizers"]
     verbs: ["update"]
   - apiGroups: ["apps"]

@@ -4,12 +4,12 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.15.0
-  name: postgresusers.pg.vigil.io
+  name: postgresusers.pg.athos.io
 spec:
-  group: pg.vigil.io
+  group: pg.athos.io
   names:
     categories:
-    - vigil
+    - athos
     kind: PostgresUser
     listKind: PostgresUserList
     plural: postgresusers
