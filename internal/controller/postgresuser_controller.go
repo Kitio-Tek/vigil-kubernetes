@@ -38,6 +38,7 @@ import (
 
 	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
 	"github.com/Kitio-Tek/athos-kubernetes/internal/postgres"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/sqlescape"
 )
 
 //+kubebuilder:rbac:groups=pg.athos.io,resources=postgresusers,verbs=get;list;watch;create;update;patch;delete
@@ -129,13 +130,30 @@ func (r *PostgresUserReconciler) Reconcile(ctx context.Context, req ctrl.Request
 }
 
 // buildUserSQL generates the idempotent SQL statements needed to create or
-// update a PostgreSQL user to match the desired spec.
+// update a PostgreSQL user to match the desired spec. All identifier and
+// string-literal interpolation goes through internal/sqlescape so embedded
+// quote characters in user-supplied names cannot break out of the SQL
+// grammar. Names that fail identifier validation cause the function to
+// return the empty string; callers MUST guard with a webhook validator
+// or a buildUserSQL("") check.
 func buildUserSQL(user *pgv1alpha1.PostgresUser, password string) string {
-	name := user.Name
+	if !sqlescape.IsValidIdentifier(user.Name) {
+		return ""
+	}
+	if err := sqlescape.AssertSafePassword(password); err != nil {
+		return ""
+	}
+	name := sqlescape.Identifier(user.Name)
+	rolname := sqlescape.StringLiteral(user.Name)
 	var sb strings.Builder
 
-	// CREATE ROLE if it does not already exist.
-	sb.WriteString(fmt.Sprintf("DO $$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '%s') THEN CREATE ROLE \"%s\" WITH LOGIN", name, name))
+	// CREATE ROLE if it does not already exist. The DO block guards the
+	// CREATE so re-applying this block is a no-op once the role exists.
+	sb.WriteString("DO $$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = ")
+	sb.WriteString(rolname)
+	sb.WriteString(") THEN CREATE ROLE ")
+	sb.WriteString(name)
+	sb.WriteString(" WITH LOGIN")
 	if user.Spec.Superuser {
 		sb.WriteString(" SUPERUSER")
 	}
@@ -143,39 +161,67 @@ func buildUserSQL(user *pgv1alpha1.PostgresUser, password string) string {
 	if connLimit == 0 {
 		connLimit = -1
 	}
-	sb.WriteString(fmt.Sprintf(" CONNECTION LIMIT %d", connLimit))
+	fmt.Fprintf(&sb, " CONNECTION LIMIT %d", connLimit)
 	if password != "" {
-		sb.WriteString(fmt.Sprintf(" PASSWORD '%s'", strings.ReplaceAll(password, "'", "''")))
+		sb.WriteString(" PASSWORD ")
+		sb.WriteString(sqlescape.StringLiteral(password))
 	}
 	sb.WriteString("; END IF; END $$;\n")
 
 	// ALTER the role to bring it to the desired state (idempotent).
-	sb.WriteString(fmt.Sprintf("ALTER ROLE \"%s\"", name))
+	sb.WriteString("ALTER ROLE ")
+	sb.WriteString(name)
 	if user.Spec.Superuser {
 		sb.WriteString(" SUPERUSER")
 	} else {
 		sb.WriteString(" NOSUPERUSER")
 	}
-	sb.WriteString(fmt.Sprintf(" CONNECTION LIMIT %d", connLimit))
+	fmt.Fprintf(&sb, " CONNECTION LIMIT %d", connLimit)
 	if password != "" {
-		sb.WriteString(fmt.Sprintf(" PASSWORD '%s'", strings.ReplaceAll(password, "'", "''")))
+		sb.WriteString(" PASSWORD ")
+		sb.WriteString(sqlescape.StringLiteral(password))
 	}
 	sb.WriteString(";\n")
 
-	// Grant requested PostgreSQL roles.
+	// Grant requested PostgreSQL roles. Roles that fail identifier
+	// validation are skipped silently; the validating webhook is the
+	// authoritative place to reject malformed names.
 	for _, role := range user.Spec.Roles {
-		sb.WriteString(fmt.Sprintf("GRANT \"%s\" TO \"%s\";\n", role, name))
+		if !sqlescape.IsValidIdentifier(role) {
+			continue
+		}
+		fmt.Fprintf(&sb, "GRANT %s TO %s;\n", sqlescape.Identifier(role), name)
 	}
 
 	// Grant database-level privileges.
 	for _, dbGrant := range user.Spec.Databases {
-		sb.WriteString(fmt.Sprintf("GRANT CONNECT ON DATABASE \"%s\" TO \"%s\";\n", dbGrant.Name, name))
+		if !sqlescape.IsValidIdentifier(dbGrant.Name) {
+			continue
+		}
+		dbIdent := sqlescape.Identifier(dbGrant.Name)
+		fmt.Fprintf(&sb, "GRANT CONNECT ON DATABASE %s TO %s;\n", dbIdent, name)
 		for _, priv := range dbGrant.Privileges {
-			sb.WriteString(fmt.Sprintf("GRANT %s ON ALL TABLES IN SCHEMA public TO \"%s\";\n", priv, name))
+			if !isValidPrivilege(priv) {
+				continue
+			}
+			fmt.Fprintf(&sb, "GRANT %s ON ALL TABLES IN SCHEMA public TO %s;\n", priv, name)
 		}
 	}
 
 	return sb.String()
+}
+
+// isValidPrivilege whitelists the SQL privileges the operator emits in
+// GRANT statements. Anything outside this set is dropped to avoid letting
+// a CRD value flow into raw SQL.
+func isValidPrivilege(p string) bool {
+	switch strings.ToUpper(p) {
+	case "SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES",
+		"TRIGGER", "USAGE", "CREATE", "CONNECT", "TEMPORARY", "TEMP",
+		"EXECUTE", "ALL", "ALL PRIVILEGES":
+		return true
+	}
+	return false
 }
 
 // execSQL executes a SQL string inside the named container of a running pod by
