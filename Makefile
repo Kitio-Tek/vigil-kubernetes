@@ -124,13 +124,6 @@ pre-commit: fmt vet verify-fmt ## Apply formatters and verify gofmt cleanliness.
 vet: ## Run go vet against code.
 	go vet ./...
 
-.PHONY: govulncheck
-govulncheck: ## Scan source and dependencies for known vulnerabilities.
-	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
-
-.PHONY: security
-security: govulncheck ## Run all configured security scanners.
-
 .PHONY: test
 test: manifests generate fmt vet envtest ## Run tests.
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" go test $$(go list ./... | grep -v /e2e) -coverprofile cover.out

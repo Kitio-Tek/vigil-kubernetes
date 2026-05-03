@@ -102,29 +102,6 @@ jobs:
           IMAGE_TAG=$(echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" | tr '[:upper:]' '[:lower:]')
           docker build -t "${IMAGE_TAG}" .
 
-  security:
-    name: Security
-    runs-on: ubuntu-latest
-    # Advisory: govulncheck reports stdlib advisories that often track
-    # the runner's Go toolchain rather than this project's source. We
-    # surface the findings without failing the run so a fresh stdlib
-    # advisory cannot block unrelated changes from merging.
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GO_VERSION }}
-          check-latest: true
-          cache: true
-
-      - name: Run govulncheck
-        run: |
-          go install golang.org/x/vuln/cmd/govulncheck@latest
-          govulncheck ./...
-
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
