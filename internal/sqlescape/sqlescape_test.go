@@ -72,15 +72,22 @@ func TestQualifiedIdentifier_Empty(t *testing.T) {
 
 func TestIsValidIdentifier(t *testing.T) {
 	cases := map[string]bool{
+		// Names safe inside a double-quoted identifier.
 		"users":                 true,
 		"_users":                true,
 		"User1":                 true,
 		"weird$name":            true,
-		"123start":              false,
-		"":                      false,
-		"with space":            false,
-		"good-name":             false,
+		"good-name":             true,
+		"123start":              true,
+		"with.dot":              true,
 		strings.Repeat("a", 63): true,
+
+		// Names that would either break out of the quoted form or
+		// truncate the statement.
+		"":                      false,
+		"bad\"quote":            false,
+		"bad\x00nul":            false,
+		"bad\nnewline":          false,
 		strings.Repeat("a", 64): false,
 	}
 	for in, want := range cases {
@@ -101,7 +108,9 @@ func TestMustIdentifier_Valid(t *testing.T) {
 }
 
 func TestMustIdentifier_Invalid(t *testing.T) {
-	if _, err := sqlescape.MustIdentifier("123bad"); err == nil {
+	// Embedded double quote breaks out of the identifier grammar even
+	// when the surrounding name is otherwise plain ASCII.
+	if _, err := sqlescape.MustIdentifier("bad\"name"); err == nil {
 		t.Error("expected error")
 	}
 }

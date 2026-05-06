@@ -61,22 +61,41 @@ func QualifiedIdentifier(parts ...string) string {
 	return strings.Join(out, ".")
 }
 
-// IsValidIdentifier reports whether name follows the simple-identifier rules
-// described in the PostgreSQL manual: starts with a letter or underscore,
-// continues with letters, digits, underscores or dollar signs, and is at
-// most 63 bytes (the default NAMEDATALEN).
+// IsValidIdentifier reports whether name is safe to use as a PostgreSQL
+// double-quoted identifier. The check accepts any character that is also
+// valid in a Kubernetes object name (lowercase letters, digits, hyphens
+// and the underscore / dollar / dot characters PostgreSQL itself accepts
+// inside an identifier) and rejects characters that would either break
+// out of the quoted form or terminate the SQL statement when interpolated:
+//
+//   - NUL bytes (would truncate the statement at the C-string boundary)
+//   - any control character below ASCII 0x20 except plain space
+//   - the double-quote character itself, since the caller is expected to
+//     pass these through Identifier() which doubles them; we forbid them
+//     here as defence in depth
+//
+// The 63-byte NAMEDATALEN limit from the PostgreSQL build-time default is
+// also enforced.
 func IsValidIdentifier(name string) bool {
 	if name == "" || len(name) > 63 {
 		return false
 	}
-	for i, r := range name {
-		if i == 0 {
-			if r != '_' && !unicode.IsLetter(r) {
-				return false
-			}
+	for _, r := range name {
+		switch {
+		case r == 0:
+			return false
+		case r < 0x20 && r != ' ':
+			return false
+		case r == '"':
+			return false
+		}
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
 			continue
 		}
-		if r != '_' && r != '$' && !unicode.IsLetter(r) && !unicode.IsDigit(r) {
+		switch r {
+		case '_', '$', '-', '.':
+			continue
+		default:
 			return false
 		}
 	}
