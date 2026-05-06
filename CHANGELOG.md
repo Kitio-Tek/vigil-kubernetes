@@ -6,6 +6,24 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-05-07
+
+### Fixed
+
+- Helm chart ClusterRole now includes `policy/poddisruptionbudgets`
+  verbs, so the PDB reconciler introduced in v0.7.0 actually has
+  permission to read and write PDBs on a fresh install.
+- `internal/sqlescape.IsValidIdentifier` now accepts hyphenated names
+  (and other characters that are safe inside a double-quoted
+  identifier). PostgresUser objects with names like `app-user` were
+  silently producing empty SQL plans and reporting `Applied=true`
+  without ever creating the role on the database.
+
+### Changed
+
+- CI `GO_VERSION` bumped from 1.24.6 to 1.24.13 for the latest
+  1.24-line stdlib security fixes.
+
 ## [0.7.0] - 2026-05-04
 
 ### Security
@@ -158,7 +176,8 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - Helm chart `charts/athos-kubernetes` bundling CRDs, RBAC and the
   Deployment manifest.
 
-[Unreleased]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/Kitio-Tek/athos-kubernetes/compare/v0.4.0...v0.5.0
