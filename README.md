@@ -235,11 +235,8 @@ Tear it back down with `make helm-uninstall && make kind-delete`.
 
 ## Testing
 
-Athos ships four test layers, plus three supporting quality gates. Each
-row maps one-to-one onto a Makefile target so contributors can reproduce
-every CI gate locally.
-
-### Test layers
+Athos ships four test layers. Each row maps one-to-one onto a Makefile
+target so contributors can reproduce every CI gate locally.
 
 | Layer | Command | What it covers |
 |---|---|---|
@@ -247,14 +244,6 @@ every CI gate locally.
 | Integration (envtest) | `make test` | Controller behaviour against a real apiserver/etcd via `controller-runtime/tools/setup-envtest`. |
 | End-to-end (Chainsaw) | `make e2e-test` | Default e2e suite, declarative `apiVersion: chainsaw.kyverno.io` tests against a live kind cluster. |
 | End-to-end (KUTTL) | `make e2e-test-kuttl` | Legacy KUTTL suite kept for parity; same coverage as the Chainsaw suite. |
-
-### Supporting gates
-
-| Gate | Command | What it covers |
-|---|---|---|
-| Helm chart | `make helm-package && helm lint charts/athos-kubernetes` | Schema and template render. |
-| Security | `make security` | `govulncheck` and `gosec` against the whole module. |
-| Secret scan | `make gitleaks` | Scans the working tree and git history against `.gitleaks.toml`. |
 
 The Chainsaw suites live under `tests/e2e/chainsaw/tests/` and follow the
 [Kyverno Chainsaw](https://kyverno.github.io/chainsaw/) declarative
