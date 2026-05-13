@@ -34,6 +34,7 @@ import (
 
 	pgv1alpha1 "github.com/Kitio-Tek/athos-kubernetes/api/v1alpha1"
 	"github.com/Kitio-Tek/athos-kubernetes/internal/pgbouncer"
+	"github.com/Kitio-Tek/athos-kubernetes/internal/portmap"
 	"github.com/Kitio-Tek/athos-kubernetes/internal/postgres"
 )
 
@@ -166,7 +167,7 @@ func (r *PostgresPoolerReconciler) reconcilePoolerDeployment(
 							Ports: []corev1.ContainerPort{
 								{
 									Name:          "pgbouncer",
-									ContainerPort: int32(cfg.ListenPort),
+									ContainerPort: portmap.SafeInt32(cfg.ListenPort),
 									Protocol:      corev1.ProtocolTCP,
 								},
 							},
@@ -179,7 +180,7 @@ func (r *PostgresPoolerReconciler) reconcilePoolerDeployment(
 							LivenessProbe: &corev1.Probe{
 								ProbeHandler: corev1.ProbeHandler{
 									TCPSocket: &corev1.TCPSocketAction{
-										Port: intstr.FromInt32(int32(cfg.ListenPort)),
+										Port: intstr.FromInt32(portmap.SafeInt32(cfg.ListenPort)),
 									},
 								},
 								InitialDelaySeconds: 5,
@@ -241,8 +242,8 @@ func (r *PostgresPoolerReconciler) reconcilePoolerService(
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "pgbouncer",
-					Port:       int32(cfg.ListenPort),
-					TargetPort: intstr.FromInt32(int32(cfg.ListenPort)),
+					Port:       portmap.SafeInt32(cfg.ListenPort),
+					TargetPort: intstr.FromInt32(portmap.SafeInt32(cfg.ListenPort)),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			},
