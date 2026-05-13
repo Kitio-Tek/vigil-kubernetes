@@ -197,17 +197,21 @@ collection removes them when the parent CR is deleted.
 
 ## Features
 
-- Automated PostgreSQL cluster provisioning
-- Primary/replica streaming replication
-- Automated failover
-- Scheduled and on-demand backups (S3, GCS)
-- Point-in-time recovery
-- TLS encryption for client connections
-- Prometheus metrics via postgres_exporter sidecar
-- Database user management via PostgresUser CRD
-- Rolling updates
-- Pause/resume reconciliation
-- Topology spread constraints and affinity rules
+Today, in v0.9.x, Athos ships:
+
+- Automated `PostgresCluster` provisioning (StatefulSet + Services + ConfigMap + ServiceAccount + Credentials Secret + PDB).
+- `PostgresUser` reconciler that creates and updates database roles via `kubectl exec` against the primary, with `Applied` status tracking and `PASSWORD` redaction in surfaced errors.
+- `PostgresBackup` reconciler that drives a Kubernetes `Job` (`pg_basebackup` or `pg_dump`) per request.
+- `PostgresPooler` reconciler that fronts the cluster with PgBouncer.
+- Prometheus metrics via `postgres_exporter` sidecar (`monitoring.enabled`).
+- TLS-aware `pg_hba.conf` rendering (caller-supplied certificates).
+- Pause / resume reconciliation via `spec.paused`.
+- Topology spread + affinity passthrough on the StatefulSet.
+- Helm chart with cluster-role, leader election, PDB and optional ServiceMonitor.
+
+For HA failover orchestration, streaming-replication wiring, S3/GCS/Azure
+backup adapters, PITR and webhook-based admission, see
+[ROADMAP.md](ROADMAP.md).
 
 ## Quick Start (kind)
 
@@ -262,34 +266,7 @@ The legacy [KUTTL](https://github.com/kudobuilder/kuttl) suites live under
 `tests/e2e/kuttl/tests/` and are exercised via `make e2e-test-kuttl`; they
 remain for parity while we phase Chainsaw in across all scenarios.
 
-<details>
-<summary><b>Why Chainsaw over KUTTL</b></summary>
 
-Athos was originally scaffolded on KUTTL, which is sufficient for "apply
-this YAML, then check that the resulting StatefulSet has the right name"
-but pushes complex flows into bash inside `commands:` blocks. Chainsaw is
-the Kyverno-maintained successor and addresses the specific gaps that
-hurt Athos most:
-
-| Concern | KUTTL | Chainsaw |
-|---|---|---|
-| Test resource model | Numbered `NN-step.yaml` / `NN-assert.yaml` files in a directory, paired by leading digit. | A single `chainsaw-test.yaml` `Test` resource per directory with named `steps[]`, each carrying `try` / `catch` / `cleanup`. |
-| Array assertions | No way to express "this list is unordered" vs "order matters" - every list match is positional. | Per-field directives so `env:` can match unordered while `initContainers:` stays ordered. |
-| Conditional / comparative assertions | No `>`, `<`, `contains`, partial-object matching; you fall back to shell scripts and `kubectl get -o jsonpath \| grep`. | First-class JMESPath assertions (e.g. `status.(readyReplicas > '0'): true`). |
-| Verifying command output | Plain `commands:` block; output checking is bash plumbing. | Built-in `script:` and `exec:` actions with `check:` assertions on stdout/stderr/exit code. |
-| Timeouts | One global `timeout` per suite. | Per-stage budgets (`apply` / `assert` / `error` / `delete` / `cleanup` / `exec`) at suite, test, and step level. |
-| Error / negative tests | Workarounds via `errors.yaml`. | A first-class `error:` step that asserts a resource is absent or rejected. |
-| Debugging | Suite logs are sparse; you re-run with `--verbose` and read raw events. | Structured per-step logs with begin/end markers and a richer failure dump. |
-| Maintainership | KUDO Builder community; less active. | Kyverno maintainers; ecosystem-aligned with Kyverno policies, used by Keptn, OpenFeature, Grafana / OpenTelemetry / Tempo operators, etc. |
-
-The upstream issue tracking this rationale is
-[kyverno/chainsaw#254](https://github.com/kyverno/chainsaw/discussions/254).
-
-New e2e scenarios should be written in Chainsaw; KUTTL stays in the tree
-only until every scenario has a Chainsaw equivalent, then it will be
-removed in a single follow-up release.
-
-</details>
 
 Coverage profiles produced by `make test` are uploaded as `coverage-*.out`
 artifacts on every CI run.
@@ -308,11 +285,18 @@ artifacts on every CI run.
 
 ## Roadmap
 
-- Pluggable backup adapters (S3, GCS, Azure Blob) with retention policies.
-- Continuous archiving with WAL streaming for tighter RPO.
-- Validating + mutating admission webhooks for `PostgresCluster`.
-- `pg_basebackup` over TLS to remote endpoints.
-- Conformance suite against `cnpg.io` interoperability patterns.
+The honest, per-milestone view of what is shipped, partial, planned, and
+out of scope lives in [ROADMAP.md](ROADMAP.md). It compares Athos against
+CloudNativePG, Crunchy PGO and Zalando postgres-operator so scope choices
+are transparent.
+
+Highlights of the upcoming milestones:
+
+- **0.10** - S3 / GCS / Azure backup adapters, cert-manager integration,
+  validating webhook for `PostgresCluster`.
+- **0.11** - Streaming replication wired end-to-end, continuous WAL
+  archiving, `PostgresRecovery` CRD for PITR, HA failover orchestration.
+- **0.12** - Major-version upgrades, replica routing by lag.
 
 See the GitHub Issues labeled `roadmap` for the live tracker.
 
