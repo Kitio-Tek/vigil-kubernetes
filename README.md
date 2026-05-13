@@ -46,20 +46,6 @@ helm install athos-kubernetes athos/athos-kubernetes \
   --create-namespace
 ```
 
-Or install directly from this repository:
-
-```bash
-helm install athos-kubernetes charts/athos-kubernetes/ \
-  --namespace athos-system \
-  --create-namespace
-```
-
-Verify the operator pod is running:
-
-```bash
-kubectl get pods -n athos-system
-```
-
 ## Configuration
 
 ### Creating a PostgreSQL Cluster
