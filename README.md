@@ -301,6 +301,10 @@ See the GitHub Issues labeled `roadmap` for the live tracker.
   govulncheck, gosec and Trivy.
 - Built with the [Operator SDK](https://sdk.operatorframework.io/) on top of
   [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime).
+- End-to-end tests are written against
+  [Kyverno Chainsaw](https://github.com/kyverno/chainsaw) with a legacy
+  [KUTTL](https://github.com/kudobuilder/kuttl) parity suite kept in tree
+  during the migration window.
 
 ## Development
 

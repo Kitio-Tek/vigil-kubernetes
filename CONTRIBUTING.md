@@ -83,6 +83,13 @@ Scopes include: `api`, `controller`, `internal`, `webhook`, `test`, `helm`,
 Athos ships two parallel e2e suites. Both run on every CI build; new
 scenarios should target Chainsaw first.
 
+Test harness upstream references:
+
+- [kyverno/chainsaw](https://github.com/kyverno/chainsaw) — declarative
+  Kubernetes-native test framework (replaces KUTTL).
+- [kudobuilder/kuttl](https://github.com/kudobuilder/kuttl) — KUbernetes
+  Test TooL, the original framework Athos was scaffolded on.
+
 - **Chainsaw (default).** `tests/e2e/chainsaw/` — each test is a
   `apiVersion: chainsaw.kyverno.io/v1alpha1` `Test` resource with declarative
   `apply` / `assert` / `error` / `cleanup` steps and per-step timeouts.
