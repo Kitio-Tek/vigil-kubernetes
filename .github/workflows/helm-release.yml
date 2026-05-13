@@ -34,6 +34,33 @@ jobs:
           git config user.name  "Kitio-Tek"
           git config user.email "kmyriantek@gmail.com"
 
+      - name: Ensure gh-pages branch exists
+        run: |
+          if ! git ls-remote --exit-code --heads origin gh-pages; then
+            echo "Creating gh-pages branch from an empty tree."
+            git switch --orphan gh-pages
+            cat > index.yaml <<'YAML'
+          apiVersion: v1
+          entries: {}
+          YAML
+            cat > README.md <<'MD'
+          # Athos Kubernetes Helm chart museum
+
+          This branch is published as a Helm chart repository at:
+
+              helm repo add athos https://kitio-tek.github.io/athos-kubernetes
+              helm repo update
+              helm search repo athos
+
+          The branch is rewritten by `chart-releaser-action` on every push to
+          `main` that touches `charts/**`. Do not commit changes here by hand.
+          MD
+            git add index.yaml README.md
+            git commit -m "chore(gh-pages): bootstrap empty chart museum"
+            git push origin gh-pages
+            git switch -
+          fi
+
       - name: Set up Helm
         uses: azure/setup-helm@v4
         with:
