@@ -1,13 +1,26 @@
 # Athos Kubernetes
 
 [![CI](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/ci.yml)
+[![Security](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/security.yml)
+[![CodeQL](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/codeql.yml)
+[![Trivy](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/trivy.yml/badge.svg?branch=main)](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/trivy.yml)
+[![Helm](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/helm.yml/badge.svg?branch=main)](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/helm.yml)
 [![Latest release](https://img.shields.io/github/v/release/Kitio-Tek/athos-kubernetes?sort=semver)](https://github.com/Kitio-Tek/athos-kubernetes/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Kitio-Tek/athos-kubernetes)](https://goreportcard.com/report/github.com/Kitio-Tek/athos-kubernetes)
+[![Go Reference](https://pkg.go.dev/badge/github.com/Kitio-Tek/athos-kubernetes.svg)](https://pkg.go.dev/github.com/Kitio-Tek/athos-kubernetes)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
-Athos Kubernetes is a Kubernetes operator for PostgreSQL. It manages the full lifecycle
-of PostgreSQL clusters, providing high availability, automated backups, point-in-time
-recovery, and TLS encryption via Kubernetes-native Custom Resource Definitions.
+Athos Kubernetes is a Kubernetes operator for PostgreSQL. It manages the full
+lifecycle of PostgreSQL clusters, providing high availability, automated backups,
+point-in-time recovery, and TLS encryption via Kubernetes-native Custom Resource
+Definitions.
+
+## Project Status
+
+Athos is in active preview (0.x). The API surface, Helm values and CRD shape
+may change between minor releases. See [SUPPORTED_VERSIONS.md](SUPPORTED_VERSIONS.md)
+for the support matrix, [CHANGELOG.md](CHANGELOG.md) for release notes, and
+[CHARTS.md](CHARTS.md) for the chart catalogue.
 
 ## Installation
 
@@ -182,14 +195,103 @@ collection removes them when the parent CR is deleted.
 - Pause/resume reconciliation
 - Topology spread constraints and affinity rules
 
+## Quick Start (kind)
+
+The repository ships everything needed to run Athos end-to-end against a local
+kind cluster:
+
+```bash
+make kind-create
+make docker-build IMG=athos-kubernetes:dev
+make kind-load    IMG=athos-kubernetes:dev
+make helm-install IMG=athos-kubernetes:dev
+
+kubectl apply -f config/samples/pg_v1alpha1_postgrescluster.yaml
+kubectl get pgc -A -w
+```
+
+To connect a throw-away psql client:
+
+```bash
+kubectl run psql --rm -it --image postgres:16-alpine -- \
+  psql -h my-cluster-primary.default.svc.cluster.local -U postgres
+```
+
+Tear it back down with `make helm-uninstall && make kind-delete`.
+
+## Testing
+
+Athos ships three test layers. They map one-to-one onto Makefile targets so
+contributors can reproduce every CI gate locally.
+
+| Layer | Command | What it covers |
+|---|---|---|
+| Unit | `make test` | Pure Go tests under `internal/`, `api/`, `internal/sqlescape`, controller helpers. |
+| Integration (envtest) | `make test` | Controller behaviour against a real apiserver/etcd via `controller-runtime/tools/setup-envtest`. |
+| End-to-end (KUTTL) | `make e2e-test` | Apply CRs against a live kind cluster and assert on observed state. |
+| Helm chart | `make helm-package && helm lint charts/athos-kubernetes` | Schema and template render. |
+| Security | `make security` | `govulncheck` and `gosec` against the whole module. |
+| Secret scan | `make gitleaks` | Scans the working tree and git history against `.gitleaks.toml`. |
+
+The KUTTL suites live under `tests/e2e/kuttl/tests/` and follow upstream
+conventions from the [KUbernetes Test TooL](https://github.com/kudobuilder/kuttl).
+Each case is a numbered directory with `NN-step.yaml` (apply) and
+`NN-assert.yaml` (expected state) files. The default `make e2e-test`
+target runs them all against the cluster pointed at by the current
+kubectl context.
+
+```bash
+kubectl-kuttl test tests/e2e/kuttl/tests/ \
+  --config tests/e2e/kuttl/kuttl-test.yaml
+```
+
+Coverage profiles produced by `make test` are uploaded as `coverage-*.out`
+artifacts on every CI run.
+
+## Security
+
+- See [SECURITY.md](SECURITY.md) for the disclosure process and supported
+  versions.
+- See [HARDENING.md](HARDENING.md) for the threat model and production
+  hardening recommendations.
+- Every push runs CodeQL, govulncheck, gosec, gitleaks and Trivy filesystem
+  scans (see badges above). Container images are scanned by Trivy on every
+  tag push via `trivy-image.yml`.
+- SQL paths that quote untrusted identifiers route through
+  `internal/sqlescape` and are unit-tested with adversarial fixtures.
+
+## Roadmap
+
+- Pluggable backup adapters (S3, GCS, Azure Blob) with retention policies.
+- Continuous archiving with WAL streaming for tighter RPO.
+- Validating + mutating admission webhooks for `PostgresCluster`.
+- `pg_basebackup` over TLS to remote endpoints.
+- Conformance suite against `cnpg.io` interoperability patterns.
+
+See the GitHub Issues labeled `roadmap` for the live tracker.
+
+## Project Maturity
+
+- Apache-2.0 licensed (see [LICENSE](LICENSE)).
+- DCO sign-off required on every commit (see [DCO.md](DCO.md)).
+- Governance, maintainers, and support documented in
+  [GOVERNANCE.md](GOVERNANCE.md), [MAINTAINERS.md](MAINTAINERS.md),
+  [SUPPORT.md](SUPPORT.md).
+- CI gates: lint, unit, integration, build, helm-lint, gitleaks, CodeQL,
+  govulncheck, gosec and Trivy.
+- Built with the [Operator SDK](https://sdk.operatorframework.io/) on top of
+  [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime).
+
 ## Development
 
-See [DEVELOPER.md](DEVELOPER.md) for local development setup, including how to run the
-operator against a kind cluster and how to run unit and integration tests.
+See [DEVELOPER.md](DEVELOPER.md) for local development setup, including how
+to run the operator against a kind cluster and how to run unit and
+integration tests.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community expectations.
 
 ## License
 
