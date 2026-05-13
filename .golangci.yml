@@ -37,10 +37,17 @@ linters:
     staticcheck:
       # SA1019 surfaces deprecation notices for upstream APIs. The roadmap
       # tracks those manually; the suppression keeps our lint signal focused
-      # on actionable findings.
+      # on actionable findings. QF*/ST* are quick-fix and stylistic
+      # categories that produce a lot of low-value churn against the
+      # generated and helper code that the operator-sdk scaffolds; we
+      # accept those locally and rely on reviewers for taste.
       checks:
         - all
         - -SA1019
+        - -QF1012
+        - -ST1000
+        - -ST1003
+        - -ST1022
   exclusions:
     generated: lax
     rules:
@@ -63,10 +70,15 @@ linters:
           - lll
         path: _test\.go
       # Webhook validators accumulate variable-sized ErrorLists from helper
-      # methods. Preallocation does not buy anything here.
+      # methods. Preallocation does not buy anything here, and the rest of
+      # internal/ has many similar append-into-variable-length-list sites
+      # where the prealloc hint is noise.
       - linters:
           - prealloc
         path: _webhook\.go
+      - linters:
+          - prealloc
+        path: internal/.*
     paths:
       - third_party$
       - builtin$
