@@ -46,52 +46,58 @@ func Parse(s string) (time.Duration, error) {
 	rest := s
 
 	for len(rest) > 0 {
-		// Find the boundary between digits and letters.
-		num := 0
-		for num < len(rest) && (isDigit(rest[num]) || rest[num] == '-' || rest[num] == '+') {
-			num++
+		segment, parsed, consumed, err := parseSegment(rest)
+		if err != nil {
+			return 0, fmt.Errorf("duration: %w", err)
 		}
-		if num == 0 {
-			return 0, fmt.Errorf("duration: missing number in %q", s)
-		}
-		unit := num
-		for unit < len(rest) && isLetter(rest[unit]) {
-			unit++
-		}
-		if unit == num {
-			return 0, fmt.Errorf("duration: missing unit in %q", s)
-		}
-
-		segment := rest[:unit]
-		switch strings.ToLower(rest[num:unit]) {
-		case "d":
-			d, err := scanInt(rest[:num])
-			if err != nil {
-				return 0, fmt.Errorf("duration: %w", err)
-			}
-			total += time.Duration(d) * Day
-		case "w":
-			d, err := scanInt(rest[:num])
-			if err != nil {
-				return 0, fmt.Errorf("duration: %w", err)
-			}
-			total += time.Duration(d) * Week
-		case "mo":
-			d, err := scanInt(rest[:num])
-			if err != nil {
-				return 0, fmt.Errorf("duration: %w", err)
-			}
-			total += time.Duration(d) * Month
-		default:
-			parsed, err := time.ParseDuration(segment)
-			if err != nil {
-				return 0, fmt.Errorf("duration: %w", err)
-			}
-			total += parsed
-		}
-		rest = rest[unit:]
+		_ = segment
+		total += parsed
+		rest = rest[consumed:]
 	}
 	return total, nil
+}
+
+// extendedUnits maps the units this package adds on top of time.ParseDuration
+// to their absolute durations.
+var extendedUnits = map[string]time.Duration{
+	"d":  Day,
+	"w":  Week,
+	"mo": Month,
+}
+
+// parseSegment consumes one <number><unit> segment from the front of rest and
+// returns the segment as written, its decoded duration, and the number of
+// bytes consumed.
+func parseSegment(rest string) (string, time.Duration, int, error) {
+	num := 0
+	for num < len(rest) && (isDigit(rest[num]) || rest[num] == '-' || rest[num] == '+') {
+		num++
+	}
+	if num == 0 {
+		return "", 0, 0, fmt.Errorf("missing number in %q", rest)
+	}
+	unit := num
+	for unit < len(rest) && isLetter(rest[unit]) {
+		unit++
+	}
+	if unit == num {
+		return "", 0, 0, fmt.Errorf("missing unit in %q", rest)
+	}
+
+	segment := rest[:unit]
+	key := strings.ToLower(rest[num:unit])
+	if mult, ok := extendedUnits[key]; ok {
+		n, err := scanInt(rest[:num])
+		if err != nil {
+			return "", 0, 0, err
+		}
+		return segment, time.Duration(n) * mult, unit, nil
+	}
+	parsed, err := time.ParseDuration(segment)
+	if err != nil {
+		return "", 0, 0, err
+	}
+	return segment, parsed, unit, nil
 }
 
 // MustParse is like Parse but panics on error. Reserved for tests.
