@@ -107,3 +107,15 @@ func MustFind(name string) Port {
 	}
 	return p
 }
+
+// SafeInt32 converts a TCP port expressed as int into int32. Ports are
+// always within [0, 65535] so the narrowing is mathematically safe, but
+// the explicit clamp satisfies static analysers that flag bare int->int32
+// conversions (gosec G115). Out-of-range inputs collapse to zero so the
+// caller fails closed on misconfiguration rather than silently wrapping.
+func SafeInt32(port int) int32 {
+	if port < 0 || port > 65535 {
+		return 0
+	}
+	return int32(port) //#nosec G115 -- bounded by guard above
+}
