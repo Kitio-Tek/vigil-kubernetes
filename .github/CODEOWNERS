@@ -1,0 +1,20 @@
+# Default owner.
+* @Kitio-Tek
+
+# API surface owners.
+api/** @Kitio-Tek
+
+# Helm chart owners.
+charts/** @Kitio-Tek
+
+# Controller owners.
+internal/controller/** @Kitio-Tek
+cmd/** @Kitio-Tek
+
+# Documentation owners.
+docs/** @Kitio-Tek
+README.md @Kitio-Tek
+CHANGELOG.md @Kitio-Tek
+
+# CI owners.
+.github/** @Kitio-Tek
