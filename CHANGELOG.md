@@ -6,6 +6,8 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-05-13
+
 ### Added
 
 - Community and governance docs: `SECURITY.md`, `CODE_OF_CONDUCT.md`,
@@ -47,6 +49,25 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - `golangci-lint` migrated to v2 with `golangci-lint-action@v8`;
   `.golangci.yml` rewritten to the v2 schema with tuned `goconst` and
   `staticcheck` settings.
+- `internal/portmap.SafeInt32` helper introduced; the pooler controller
+  routes every `int -> int32` port conversion through it (clears gosec G115).
+- The exporter `DATA_SOURCE_NAME` env var is now annotated as
+  runtime-expanded so gosec G101 stops flagging the libpq DSN template as
+  a hardcoded credential.
+- `internal/duration.Parse`, `internal/timeutil.ParseDuration`,
+  `internal/cronexpr.validateAtom` and
+  `(*PostgresClusterReconciler).Reconcile` were refactored into per-shape
+  helpers to drop cyclomatic complexity under 16 (Go Report Card gocyclo).
+- KUTTL e2e suite extended: install assertion targets the helm-generated
+  deployment name, new credentials Secret and PodDisruptionBudget asserts,
+  and a pause/resume scenario.
+
+### Fixed
+
+- E2E workflow no longer installs CRDs separately from Helm so the chart
+  release ownership labels stop colliding.
+- `helm-release.yml` records the current branch before `git switch --orphan`
+  so the bootstrap step does not crash with `invalid reference: @{-1}`.
 
 ## [0.8.0] - 2026-05-07
 
