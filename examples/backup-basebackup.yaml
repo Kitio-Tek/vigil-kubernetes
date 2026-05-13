@@ -1,0 +1,9 @@
+apiVersion: pg.athos.io/v1alpha1
+kind: PostgresBackup
+metadata:
+  name: example-basebackup
+  namespace: default
+spec:
+  clusterName: example-cluster
+  method: basebackup
+  online: true

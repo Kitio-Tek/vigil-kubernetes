@@ -1,0 +1,8 @@
+apiVersion: pg.athos.io/v1alpha1
+kind: PostgresBackup
+metadata:
+  name: example-pgdump
+  namespace: default
+spec:
+  clusterName: example-cluster
+  method: pgdump
