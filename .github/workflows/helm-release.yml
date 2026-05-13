@@ -74,9 +74,23 @@ jobs:
           mark_as_latest: false
           # Keep operator release names like v0.8.0 separate from the
           # auto-generated chart releases. Chart releases are prefixed with
-          # "chart-" so they do not displace the operator's Latest pointer
+          # "helm-v" so they do not displace the operator's Latest pointer
           # nor reuse the v-prefixed tag namespace.
           config: cr.yaml
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CR_SKIP_EXISTING: "true"
+          CR_MAKE_RELEASE_LATEST: "false"
+
+      - name: Demote chart release out of Latest
+        # chart-releaser cannot tag the release as a pre-release directly,
+        # so we flip the flag after the fact via the GitHub API. This keeps
+        # operator releases (v0.x.y) as the user-facing Latest entry.
+        run: |
+          chart_version=$(yq '.version' charts/athos-kubernetes/Chart.yaml)
+          release="helm-v${chart_version}"
+          if gh release view "$release" >/dev/null 2>&1; then
+            gh release edit "$release" --prerelease
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
