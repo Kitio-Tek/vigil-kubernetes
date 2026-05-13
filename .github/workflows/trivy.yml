@@ -1,0 +1,44 @@
+name: Trivy
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "0 4 * * 2"
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  trivy:
+    name: Trivy filesystem scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Two-pass scan: first emit SARIF without failing so the upload step
+      # always runs; second pass fails the build if any CRITICAL/HIGH finding
+      # is present so accidentally-bumped vulnerable deps cannot land.
+      - name: Run Trivy (SARIF)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          format: sarif
+          output: trivy-fs.sarif
+          severity: CRITICAL,HIGH
+          exit-code: 0
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-fs.sarif
+      - name: Run Trivy (gating)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: 1
+          ignore-unfixed: true
