@@ -1,0 +1,78 @@
+name: E2E
+
+# Runs the full Chainsaw + KUTTL end-to-end suites against a kind cluster.
+# Carved out of ci.yml so it has its own status badge on the README and so
+# that a flaky e2e run does not flip the main CI badge red.
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  GO_VERSION: "1.26.3"
+
+jobs:
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: athos-kubernetes-e2e
+
+      - name: Install KUTTL
+        run: |
+          curl -Lo kubectl-kuttl https://github.com/kudobuilder/kuttl/releases/download/v0.15.0/kubectl-kuttl_0.15.0_linux_x86_64
+          chmod +x kubectl-kuttl
+          sudo mv kubectl-kuttl /usr/local/bin/
+
+      - name: Install Chainsaw
+        run: |
+          curl -L https://github.com/kyverno/chainsaw/releases/download/v0.2.12/chainsaw_linux_amd64.tar.gz | sudo tar -xz -C /usr/local/bin chainsaw
+          chainsaw version
+
+      - name: Build and load operator image
+        run: |
+          docker build -t ghcr.io/kitio-tek/athos-kubernetes:latest .
+          kind load docker-image ghcr.io/kitio-tek/athos-kubernetes:latest --name athos-kubernetes-e2e
+
+      - name: Regenerate manifests
+        run: |
+          GOBIN=$(pwd)/bin go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.18.0
+          export PATH=$PATH:$(pwd)/bin
+          make manifests
+
+      - name: Deploy operator
+        run: |
+          helm install athos-kubernetes charts/athos-kubernetes/ \
+            --namespace athos-system \
+            --create-namespace \
+            --set image.repository=ghcr.io/kitio-tek/athos-kubernetes \
+            --set image.tag=latest \
+            --set image.pullPolicy=IfNotPresent \
+            --wait --timeout 5m
+
+      - name: Run KUTTL tests
+        run: |
+          kubectl kuttl test tests/e2e/kuttl/ --config tests/e2e/kuttl/kuttl-test.yaml
+
+      - name: Run Chainsaw tests
+        run: |
+          chainsaw test \
+            --config tests/e2e/chainsaw/.chainsaw.yaml \
+            tests/e2e/chainsaw/tests/

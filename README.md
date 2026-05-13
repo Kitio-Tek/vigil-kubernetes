@@ -1,6 +1,7 @@
 # Athos Kubernetes
 
 [![CI](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/ci.yml)
+[![E2E](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/e2e.yml/badge.svg?branch=main)](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/e2e.yml)
 [![Security](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/security.yml)
 [![CodeQL](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/codeql.yml)
 [![Trivy](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/trivy.yml/badge.svg?branch=main)](https://github.com/Kitio-Tek/athos-kubernetes/actions/workflows/trivy.yml)
