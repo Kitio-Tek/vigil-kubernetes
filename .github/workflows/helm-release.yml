@@ -70,7 +70,12 @@ jobs:
         uses: helm/chart-releaser-action@v1.6.0
         with:
           charts_dir: charts
-          mark_as_latest: true
+          mark_as_latest: false
+          # Keep operator release names like v0.8.0 separate from the
+          # auto-generated chart releases. Chart releases are prefixed with
+          # "chart-" so they do not displace the operator's Latest pointer
+          # nor reuse the v-prefixed tag namespace.
+          config: cr.yaml
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CR_SKIP_EXISTING: "true"

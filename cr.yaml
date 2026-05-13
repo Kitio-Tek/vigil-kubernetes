@@ -1,0 +1,7 @@
+# Configuration for helm/chart-releaser-action.
+#
+# Chart releases live under a separate name namespace from operator releases
+# so that the operator's Latest tag (v0.8.0, v0.9.0 ...) is not displaced
+# every time the chart museum is republished.
+
+release-name-template: "chart-{{ .Name }}-{{ .Version }}"
