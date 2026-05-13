@@ -242,22 +242,28 @@ contributors can reproduce every CI gate locally.
 |---|---|---|
 | Unit | `make test` | Pure Go tests under `internal/`, `api/`, `internal/sqlescape`, controller helpers. |
 | Integration (envtest) | `make test` | Controller behaviour against a real apiserver/etcd via `controller-runtime/tools/setup-envtest`. |
-| End-to-end (KUTTL) | `make e2e-test` | Apply CRs against a live kind cluster and assert on observed state. |
+| End-to-end (Chainsaw) | `make e2e-test` | Default e2e suite, declarative `apiVersion: chainsaw.kyverno.io` tests against a live kind cluster. |
+| End-to-end (KUTTL) | `make e2e-test-kuttl` | Legacy KUTTL suite kept for parity; same coverage as the Chainsaw suite. |
 | Helm chart | `make helm-package && helm lint charts/athos-kubernetes` | Schema and template render. |
 | Security | `make security` | `govulncheck` and `gosec` against the whole module. |
 | Secret scan | `make gitleaks` | Scans the working tree and git history against `.gitleaks.toml`. |
 
-The KUTTL suites live under `tests/e2e/kuttl/tests/` and follow upstream
-conventions from the [KUbernetes Test TooL](https://github.com/kudobuilder/kuttl).
-Each case is a numbered directory with `NN-step.yaml` (apply) and
-`NN-assert.yaml` (expected state) files. The default `make e2e-test`
+The Chainsaw suites live under `tests/e2e/chainsaw/tests/` and follow the
+[Kyverno Chainsaw](https://kyverno.github.io/chainsaw/) declarative
+`Test` resource format. Each case is a directory with a `chainsaw-test.yaml`
+defining apply/assert/error/cleanup steps. The default `make e2e-test`
 target runs them all against the cluster pointed at by the current
 kubectl context.
 
 ```bash
-kubectl-kuttl test tests/e2e/kuttl/tests/ \
-  --config tests/e2e/kuttl/kuttl-test.yaml
+chainsaw test \
+  --config tests/e2e/chainsaw/.chainsaw.yaml \
+  tests/e2e/chainsaw/tests/
 ```
+
+The legacy [KUTTL](https://github.com/kudobuilder/kuttl) suites live under
+`tests/e2e/kuttl/tests/` and are exercised via `make e2e-test-kuttl`; they
+remain for parity while we phase Chainsaw in across all scenarios.
 
 Coverage profiles produced by `make test` are uploaded as `coverage-*.out`
 artifacts on every CI run.

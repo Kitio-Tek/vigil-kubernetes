@@ -28,7 +28,8 @@ athos-kubernetes/
     controller/                Reconciler implementations
     postgres/                  PostgreSQL-specific helpers (naming, config, resources)
     ...                        Other reusable libraries (cronexpr, sqlescape, etc.)
-  tests/e2e/kuttl/             KUTTL end-to-end tests
+  tests/e2e/chainsaw/          Chainsaw (Kyverno) e2e tests — default
+  tests/e2e/kuttl/             KUTTL e2e tests — legacy parity
   test/e2e/                    Go-based end-to-end tests
   .github/workflows/           CI/CD pipelines
 ```
