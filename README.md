@@ -52,7 +52,7 @@ documented in [docs/api-reference.md](docs/api-reference.md).
 | Roadmap  | [ROADMAP.md](ROADMAP.md) |
 | Release notes | [CHANGELOG.md](CHANGELOG.md) |
 | Local development, kind quick-start, generated code | [DEVELOPER.md](DEVELOPER.md) |
-| Contributing, test framework (Chainsaw / KUTTL), commit style | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| Contributing, test framework ([Chainsaw](https://github.com/kyverno/chainsaw) / [KUTTL](https://github.com/kudobuilder/kuttl)), commit style | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Security disclosure process and supported versions | [SECURITY.md](SECURITY.md) |
 | Production hardening and threat model | [HARDENING.md](HARDENING.md) |
 | Governance, maintainers, support channels | [GOVERNANCE.md](GOVERNANCE.md), [MAINTAINERS.md](MAINTAINERS.md), [SUPPORT.md](SUPPORT.md) |
