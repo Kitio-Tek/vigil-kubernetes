@@ -1,0 +1,64 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: cluster-basic
+spec:
+  description: |
+    Create a single-instance PostgresCluster, then assert that the operator
+    materialises the StatefulSet, the three Services, the credentials Secret
+    and the PodDisruptionBudget for it.
+  steps:
+    - name: create-cluster
+      try:
+        - apply:
+            resource:
+              apiVersion: pg.athos.io/v1alpha1
+              kind: PostgresCluster
+              metadata:
+                name: basic
+              spec:
+                postgresVersion: 16
+                instances: 1
+                storage:
+                  size: 1Gi
+    - name: assert-managed-resources
+      try:
+        - assert:
+            resource:
+              apiVersion: apps/v1
+              kind: StatefulSet
+              metadata:
+                name: basic
+              status:
+                replicas: 1
+        - assert:
+            resource:
+              apiVersion: v1
+              kind: Service
+              metadata:
+                name: basic-primary
+        - assert:
+            resource:
+              apiVersion: v1
+              kind: Service
+              metadata:
+                name: basic-replicas
+        - assert:
+            resource:
+              apiVersion: v1
+              kind: Service
+              metadata:
+                name: basic-pods
+        - assert:
+            resource:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                name: basic-credentials
+              type: Opaque
+        - assert:
+            resource:
+              apiVersion: policy/v1
+              kind: PodDisruptionBudget
+              metadata:
+                name: basic-pdb

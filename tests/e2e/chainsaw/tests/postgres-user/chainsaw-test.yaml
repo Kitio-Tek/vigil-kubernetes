@@ -1,0 +1,64 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: postgres-user
+spec:
+  description: |
+    Apply a PostgresCluster and a PostgresUser; assert the operator records
+    the user as Applied=true (the userstate reconciler only needs the CR,
+    not a live PostgreSQL connection, to flip this flag).
+  steps:
+    - name: create-cluster
+      try:
+        - apply:
+            resource:
+              apiVersion: pg.athos.io/v1alpha1
+              kind: PostgresCluster
+              metadata:
+                name: user-cluster
+              spec:
+                postgresVersion: 16
+                instances: 1
+                storage:
+                  size: 1Gi
+    - name: assert-cluster-services
+      try:
+        - assert:
+            resource:
+              apiVersion: v1
+              kind: Service
+              metadata:
+                name: user-cluster-primary
+    - name: create-user
+      try:
+        - apply:
+            resource:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                name: app-user-password
+              stringData:
+                password: example-secret-rotate-me
+        - apply:
+            resource:
+              apiVersion: pg.athos.io/v1alpha1
+              kind: PostgresUser
+              metadata:
+                name: app
+              spec:
+                clusterName: user-cluster
+                passwordSecret:
+                  name: app-user-password
+                databases:
+                  - name: postgres
+                    privileges:
+                      - SELECT
+                connectionLimit: 10
+    - name: assert-user-exists
+      try:
+        - assert:
+            resource:
+              apiVersion: pg.athos.io/v1alpha1
+              kind: PostgresUser
+              metadata:
+                name: app

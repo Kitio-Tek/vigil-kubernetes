@@ -185,9 +185,20 @@ kind-load: docker-build ## Build and load the operator image into the kind clust
 KUTTL ?= kubectl-kuttl
 KUTTL_CONFIG ?= tests/e2e/kuttl/kuttl-test.yaml
 
+CHAINSAW ?= chainsaw
+CHAINSAW_CONFIG ?= tests/e2e/chainsaw/.chainsaw.yaml
+CHAINSAW_TESTS ?= tests/e2e/chainsaw/tests/
+
 .PHONY: e2e-test
-e2e-test: ## Run KUTTL end-to-end tests against the current kubectl context.
+e2e-test: e2e-test-chainsaw ## Run end-to-end tests (Chainsaw) against the current kubectl context.
+
+.PHONY: e2e-test-kuttl
+e2e-test-kuttl: ## Run the legacy KUTTL suite against the current kubectl context.
 	$(KUTTL) test tests/e2e/kuttl/ --config $(KUTTL_CONFIG)
+
+.PHONY: e2e-test-chainsaw
+e2e-test-chainsaw: ## Run the Chainsaw suite (Kyverno's modern KUTTL replacement).
+	$(CHAINSAW) test --config $(CHAINSAW_CONFIG) $(CHAINSAW_TESTS)
 
 .PHONY: run-local
 run-local: install run ## Install CRDs and run the operator locally.
