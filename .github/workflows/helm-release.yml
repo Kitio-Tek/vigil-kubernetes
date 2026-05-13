@@ -38,6 +38,7 @@ jobs:
         run: |
           if ! git ls-remote --exit-code --heads origin gh-pages; then
             echo "Creating gh-pages branch from an empty tree."
+            current_ref=$(git rev-parse --abbrev-ref HEAD)
             git switch --orphan gh-pages
             cat > index.yaml <<'YAML'
           apiVersion: v1
@@ -58,7 +59,7 @@ jobs:
             git add index.yaml README.md
             git commit -m "chore(gh-pages): bootstrap empty chart museum"
             git push origin gh-pages
-            git switch -
+            git switch "$current_ref"
           fi
 
       - name: Set up Helm
