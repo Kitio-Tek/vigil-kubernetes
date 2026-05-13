@@ -31,7 +31,22 @@ for the support matrix, [CHANGELOG.md](CHANGELOG.md) for release notes, and
 
 ### Installing with Helm
 
+Add the chart repository:
+
+```bash
+helm repo add athos https://kitio-tek.github.io/athos-kubernetes
+helm repo update
+```
+
 Install the operator into a dedicated namespace:
+
+```bash
+helm install athos-kubernetes athos/athos-kubernetes \
+  --namespace athos-system \
+  --create-namespace
+```
+
+Or install directly from this repository:
 
 ```bash
 helm install athos-kubernetes charts/athos-kubernetes/ \
