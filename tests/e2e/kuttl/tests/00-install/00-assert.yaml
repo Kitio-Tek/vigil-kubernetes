@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: athos-controller-manager
+  name: athos-kubernetes
   namespace: athos-system
 status:
   availableReplicas: 1
