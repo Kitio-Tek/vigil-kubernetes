@@ -1,9 +1,0 @@
-apiVersion: pg.athos.io/v1alpha1
-kind: PostgresBackup
-metadata:
-  name: e2e-backup
-  namespace: default
-spec:
-  clusterName: e2e-cluster
-  method: basebackup
-  online: true

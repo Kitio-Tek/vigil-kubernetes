@@ -1,7 +1,10 @@
 apiVersion: pg.athos.io/v1alpha1
 kind: PostgresCluster
 metadata:
-  name: e2e-cluster
-  namespace: default
+  name: lifecycle
 spec:
+  postgresVersion: 16
+  instances: 1
+  storage:
+    size: 1Gi
   paused: false

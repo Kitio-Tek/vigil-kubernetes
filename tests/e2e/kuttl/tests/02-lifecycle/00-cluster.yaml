@@ -1,0 +1,9 @@
+apiVersion: pg.athos.io/v1alpha1
+kind: PostgresCluster
+metadata:
+  name: lifecycle
+spec:
+  postgresVersion: 16
+  instances: 1
+  storage:
+    size: 1Gi

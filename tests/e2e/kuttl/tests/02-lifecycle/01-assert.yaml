@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: lifecycle
+status:
+  replicas: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lifecycle-primary
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lifecycle-replicas
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lifecycle-pods
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: lifecycle-credentials
+type: Opaque
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: lifecycle-pdb

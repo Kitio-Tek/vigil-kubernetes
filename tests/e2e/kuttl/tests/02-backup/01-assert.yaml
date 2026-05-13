@@ -1,6 +1,0 @@
-apiVersion: batch/v1
-kind: Job
-metadata:
-  namespace: default
-  labels:
-    pg.athos.io/backup: e2e-backup

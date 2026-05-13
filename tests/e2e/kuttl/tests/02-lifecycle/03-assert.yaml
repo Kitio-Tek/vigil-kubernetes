@@ -1,7 +1,6 @@
 apiVersion: pg.athos.io/v1alpha1
 kind: PostgresCluster
 metadata:
-  name: e2e-cluster
-  namespace: default
+  name: lifecycle
 status:
   phase: Paused

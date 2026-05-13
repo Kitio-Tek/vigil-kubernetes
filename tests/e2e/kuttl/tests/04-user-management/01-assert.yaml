@@ -1,7 +1,0 @@
-apiVersion: pg.athos.io/v1alpha1
-kind: PostgresUser
-metadata:
-  name: e2e-app-user
-  namespace: default
-status:
-  applied: true
