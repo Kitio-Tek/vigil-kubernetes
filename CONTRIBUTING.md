@@ -5,8 +5,7 @@ explain how to submit issues and pull requests effectively.
 
 ## Code of Conduct
 
-This project follows the CNCF Code of Conduct. All contributors are expected to
-treat each other with respect.
+All contributors are expected to treat each other with respect.
 
 ## Reporting Issues
 
