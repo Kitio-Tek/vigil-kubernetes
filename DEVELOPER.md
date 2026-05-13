@@ -107,7 +107,7 @@ make test
 The first run downloads the envtest binaries to `bin/`. Subsequent runs use the
 cached binaries.
 
-### End-to-End Tests with KUTTL
+### End-to-End Tests (Chainsaw + KUTTL)
 
 E2E tests require a running Kubernetes cluster and the operator deployed inside it.
 Using kind:
@@ -115,11 +115,19 @@ Using kind:
 ```bash
 make kind-create
 make docker-build IMG=ghcr.io/kitio-tek/athos-kubernetes:dev
-make kind-load IMG=ghcr.io/kitio-tek/athos-kubernetes:dev
-make install
-kubectl apply -k config/manager/
+make kind-load    IMG=ghcr.io/kitio-tek/athos-kubernetes:dev
+make helm-install IMG=ghcr.io/kitio-tek/athos-kubernetes:dev
+
+# Default Chainsaw suite (Kyverno chainsaw.kyverno.io/v1alpha1 Tests):
 make e2e-test
+
+# Legacy KUTTL parity suite (kudobuilder/kuttl):
+make e2e-test-kuttl
 ```
+
+Install Chainsaw from <https://github.com/kyverno/chainsaw/releases> and
+`kubectl-kuttl` from <https://github.com/kudobuilder/kuttl/releases> before
+running these targets locally.
 
 ## Code Generation
 
