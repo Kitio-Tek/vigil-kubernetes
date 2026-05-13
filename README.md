@@ -49,7 +49,7 @@ documented in [docs/api-reference.md](docs/api-reference.md).
 |---|---|
 | API reference (`PostgresCluster`, `PostgresBackup`, `PostgresUser`) | [docs/api-reference.md](docs/api-reference.md) |
 | Helm chart values, museum, upgrade flow | [CHARTS.md](CHARTS.md) |
-| Roadmap and CNPG / Crunchy / Zalando feature matrix | [ROADMAP.md](ROADMAP.md) |
+| Roadmap  | [ROADMAP.md](ROADMAP.md) |
 | Release notes | [CHANGELOG.md](CHANGELOG.md) |
 | Local development, kind quick-start, generated code | [DEVELOPER.md](DEVELOPER.md) |
 | Contributing, test framework (Chainsaw / KUTTL), commit style | [CONTRIBUTING.md](CONTRIBUTING.md) |

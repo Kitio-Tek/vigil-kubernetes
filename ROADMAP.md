@@ -47,7 +47,7 @@ with an owning milestone; `not in scope` = explicitly out of scope for the
 The milestones are intentionally narrow so each one ships a deployable,
 e2e-tested unit.
 
-### 0.10 — backup storage + admission gates
+### 0.10 - backup storage + admission gates
 
 Goal: turn `PostgresBackup` from a Job-runner into a backup product, and
 stop accepting obviously broken CRs.
@@ -62,7 +62,7 @@ stop accepting obviously broken CRs.
       (version range, storage size minimums, instance count caps).
 - [ ] Chainsaw e2e: backup-to-S3 with a kind-hosted MinIO fixture.
 
-### 0.11 — failover + PITR
+### 0.11 - failover + PITR
 
 Goal: claim "production-grade" credibly.
 
@@ -77,7 +77,7 @@ Goal: claim "production-grade" credibly.
 - [ ] Chainsaw e2e: kill the primary pod and assert the cluster recovers
       with the replica promoted within an SLO.
 
-### 0.12 — upgrades + read routing
+### 0.12 - upgrades + read routing
 
 Goal: cover the operational surface most users hit second.
 
@@ -88,7 +88,7 @@ Goal: cover the operational surface most users hit second.
 - [ ] Topology-aware read replicas (zone affinity / anti-affinity policy
       knobs on `PostgresCluster.spec.topologySpread`).
 
-### 0.13+ — replication groups + ecosystem
+### 0.13+ - replication groups + ecosystem
 
 - [ ] Synchronous replication groups with quorum settings.
 - [ ] Operator metrics on `controller_runtime_reconcile_total{result}`,

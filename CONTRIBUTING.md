@@ -129,7 +129,7 @@ kept hitting (see the upstream rationale in
 | Timeouts | One global `timeout`. | Per-stage budgets (`apply` / `assert` / `error` / `delete` / `cleanup` / `exec`) at suite, test, and step level. |
 | Negative tests | Workarounds via `errors.yaml`. | First-class `error:` step asserting a resource is absent or rejected. |
 | Debugging | Sparse logs; you re-run with `--verbose` and read raw events. | Structured per-step logs with `BEGIN` / `END` markers and a richer failure dump. |
-| Ecosystem | KUDO Builder; less active. | Kyverno; used by Keptn, OpenFeature, Grafana / OpenTelemetry / Tempo operators, Argo Rollouts Gateway API, and others. |
+
 
 When adding a new e2e scenario, port it to Chainsaw and drop the equivalent
 KUTTL case in the same PR if the coverage now lives only in Chainsaw.
