@@ -7,6 +7,13 @@
 bin/*
 Dockerfile.cross
 
+# Kubeconfigs in any form — never commit.
+kubeconfig
+kubeconfig.*
+*.kubeconfig
+.kube/
+admin.conf
+
 # Test binary, built with `go test -c`
 *.test
 
