@@ -2,9 +2,15 @@ apiVersion: kuttl.dev/v1beta1
 kind: TestSuite
 testDirs:
   - tests/
-timeout: 120
+# Each test step is allowed up to 300s so the backup Job and StatefulSet
+# rollout have time to come online on slow CI runners.
+timeout: 300
+# Run tests serially so the cluster name in test fixtures stays unique
+# and the order of bring-up -> create -> backup -> scale stays deterministic.
 parallel: 1
+# Keep cleanup on. KUTTL tears down the per-test namespace at the end of each
+# case so failure artefacts can still be inspected from the run logs.
 skipDelete: false
+# The kind cluster is pre-provisioned by the GitHub Actions runner via
+# helm/kind-action; KUTTL must not try to start its own.
 startKIND: false
-kindContainers:
-  - ghcr.io/kitio-tek/athos:latest
