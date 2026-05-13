@@ -18,7 +18,7 @@ permissions:
   security-events: write
 
 env:
-  GO_VERSION: "1.25.10"
+  GO_VERSION: "1.26.3"
 
 jobs:
   govulncheck:
@@ -57,7 +57,7 @@ jobs:
           args: -exclude-dir=test -exclude-dir=tests -exclude-dir=hack -exclude-generated -fmt=sarif -out=gosec.sarif ./...
 
       - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: gosec.sarif
