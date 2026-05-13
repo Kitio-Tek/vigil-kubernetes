@@ -85,12 +85,12 @@ scenarios should target Chainsaw first.
 
 Test harness upstream references:
 
-- [kyverno/chainsaw](https://github.com/kyverno/chainsaw) — declarative
+- [kyverno/chainsaw](https://github.com/kyverno/chainsaw) - declarative
   Kubernetes-native test framework (replaces KUTTL).
-- [kudobuilder/kuttl](https://github.com/kudobuilder/kuttl) — KUbernetes
+- [kudobuilder/kuttl](https://github.com/kudobuilder/kuttl) - KUbernetes
   Test TooL, the original framework Athos was scaffolded on.
 
-- **Chainsaw (default).** `tests/e2e/chainsaw/` — each test is a
+- **Chainsaw (default).** `tests/e2e/chainsaw/` - each test is a
   `apiVersion: chainsaw.kyverno.io/v1alpha1` `Test` resource with declarative
   `apply` / `assert` / `error` / `cleanup` steps and per-step timeouts.
   Run locally with:
@@ -101,7 +101,7 @@ Test harness upstream references:
   chainsaw test --config tests/e2e/chainsaw/.chainsaw.yaml tests/e2e/chainsaw/tests/
   ```
 
-- **KUTTL (legacy parity).** `tests/e2e/kuttl/` — each test is a numbered
+- **KUTTL (legacy parity).** `tests/e2e/kuttl/` - each test is a numbered
   directory with `NN-<name>.yaml` apply files paired with `NN-assert.yaml`
   expected-state files. Kept for parity with the historical Athos test
   harness while we migrate every scenario into Chainsaw. Run locally with:
@@ -110,7 +110,8 @@ Test harness upstream references:
   make e2e-test-kuttl
   ```
 
-### Why Chainsaw over KUTTL
+<details>
+<summary><b>Why Chainsaw over KUTTL</b></summary>
 
 Athos was originally scaffolded on KUTTL. KUTTL is enough for the basic
 "apply this CR, expect a StatefulSet with this name" loop, but every
@@ -122,7 +123,7 @@ kept hitting (see the upstream rationale in
 | Concern | KUTTL | Chainsaw |
 |---|---|---|
 | Test resource model | Numbered `NN-step.yaml` / `NN-assert.yaml` files paired by leading digit. | A single `chainsaw-test.yaml` `Test` resource with named `steps[]`, each with `try` / `catch` / `cleanup`. |
-| Array assertions | Positional only — no way to say "this list is unordered". | Per-field directives, so `env:` can be unordered while `initContainers:` stays ordered. |
+| Array assertions | Positional only - no way to say "this list is unordered". | Per-field directives, so `env:` can be unordered while `initContainers:` stays ordered. |
 | Conditional / comparative assertions | No `>`, `<`, `contains`, partial-object matching. | First-class JMESPath assertions (e.g. `status.(readyReplicas > '0'): true`). |
 | Command / CLI output | Plain `commands:` block; you write bash to check output. | `script:` and `exec:` actions with `check:` over stdout/stderr/exit code. |
 | Timeouts | One global `timeout`. | Per-stage budgets (`apply` / `assert` / `error` / `delete` / `cleanup` / `exec`) at suite, test, and step level. |
@@ -133,6 +134,8 @@ kept hitting (see the upstream rationale in
 When adding a new e2e scenario, port it to Chainsaw and drop the equivalent
 KUTTL case in the same PR if the coverage now lives only in Chainsaw.
 
+</details>
+
 ## Documentation
 
 Update the relevant documentation when changing public APIs or operator behaviour:
@@ -141,21 +144,7 @@ Update the relevant documentation when changing public APIs or operator behaviou
 - Architecture and workflow changes belong in `DEVELOPER.md`
 - User-facing feature additions belong in `README.md`
 
-## Notification preferences
 
-GitHub emails repository watchers when an Actions run on a default branch
-fails. If you are a maintainer working on a feature branch and would rather
-not receive a failure email for every red push to `main`, configure your
-personal notification preferences:
-
-1. Open <https://github.com/settings/notifications>.
-2. Under *Actions*, uncheck *Send notifications for failed workflows only
-   for workflows personally triggered* (or untick the email channel
-   entirely).
-3. Optionally, set this repository to *Custom* watch and uncheck *Actions*.
-
-This is a personal setting; no change in this repository can disable the
-notifications for everyone, because some watchers want them.
 
 ## License
 
