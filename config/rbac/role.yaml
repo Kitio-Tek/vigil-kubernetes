@@ -5,45 +5,12 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - apps
-  resources:
-  - deployments
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - apps
-  resources:
-  - statefulsets
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - batch
-  resources:
-  - jobs
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
   - ""
   resources:
   - configmaps
+  - secrets
+  - serviceaccounts
+  - services
   verbs:
   - create
   - delete
@@ -77,9 +44,10 @@ rules:
   - list
   - watch
 - apiGroups:
-  - ""
+  - apps
   resources:
-  - secrets
+  - deployments
+  - statefulsets
   verbs:
   - create
   - delete
@@ -89,21 +57,9 @@ rules:
   - update
   - watch
 - apiGroups:
-  - ""
+  - batch
   resources:
-  - serviceaccounts
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - services
+  - jobs
   verbs:
   - create
   - delete
@@ -116,57 +72,7 @@ rules:
   - pg.athos.io
   resources:
   - postgresbackups
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - pg.athos.io
-  resources:
-  - postgresbackups/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - pg.athos.io
-  resources:
-  - postgresbackups/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - pg.athos.io
-  resources:
   - postgresclusters
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - pg.athos.io
-  resources:
-  - postgresclusters/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - pg.athos.io
-  resources:
-  - postgresclusters/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - pg.athos.io
-  resources:
   - postgresusers
   verbs:
   - create
@@ -179,12 +85,16 @@ rules:
 - apiGroups:
   - pg.athos.io
   resources:
+  - postgresbackups/finalizers
+  - postgresclusters/finalizers
   - postgresusers/finalizers
   verbs:
   - update
 - apiGroups:
   - pg.athos.io
   resources:
+  - postgresbackups/status
+  - postgresclusters/status
   - postgresusers/status
   verbs:
   - get
