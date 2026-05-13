@@ -101,12 +101,6 @@ Test harness upstream references:
   chainsaw test --config tests/e2e/chainsaw/.chainsaw.yaml tests/e2e/chainsaw/tests/
   ```
 
-  Chainsaw replaces the brittle bits of KUTTL: rich list/object assertions,
-  comparison operators (`>`, `<`, …), partial-object matching, and CLI/exec
-  step verification. See
-  [kyverno/chainsaw](https://github.com/kyverno/chainsaw) for the test
-  reference.
-
 - **KUTTL (legacy parity).** `tests/e2e/kuttl/` — each test is a numbered
   directory with `NN-<name>.yaml` apply files paired with `NN-assert.yaml`
   expected-state files. Kept for parity with the historical Athos test
@@ -115,6 +109,26 @@ Test harness upstream references:
   ```bash
   make e2e-test-kuttl
   ```
+
+### Why Chainsaw over KUTTL
+
+Athos was originally scaffolded on KUTTL. KUTTL is enough for the basic
+"apply this CR, expect a StatefulSet with this name" loop, but every
+slightly richer assertion drifts into bash inside a `commands:` block.
+Chainsaw, maintained by the Kyverno team, fixes the specific gaps Athos
+kept hitting (see the upstream rationale in
+[kyverno/chainsaw#254](https://github.com/kyverno/chainsaw/discussions/254)):
+
+| Concern | KUTTL | Chainsaw |
+|---|---|---|
+| Test resource model | Numbered `NN-step.yaml` / `NN-assert.yaml` files paired by leading digit. | A single `chainsaw-test.yaml` `Test` resource with named `steps[]`, each with `try` / `catch` / `cleanup`. |
+| Array assertions | Positional only — no way to say "this list is unordered". | Per-field directives, so `env:` can be unordered while `initContainers:` stays ordered. |
+| Conditional / comparative assertions | No `>`, `<`, `contains`, partial-object matching. | First-class JMESPath assertions (e.g. `status.(readyReplicas > '0'): true`). |
+| Command / CLI output | Plain `commands:` block; you write bash to check output. | `script:` and `exec:` actions with `check:` over stdout/stderr/exit code. |
+| Timeouts | One global `timeout`. | Per-stage budgets (`apply` / `assert` / `error` / `delete` / `cleanup` / `exec`) at suite, test, and step level. |
+| Negative tests | Workarounds via `errors.yaml`. | First-class `error:` step asserting a resource is absent or rejected. |
+| Debugging | Sparse logs; you re-run with `--verbose` and read raw events. | Structured per-step logs with `BEGIN` / `END` markers and a richer failure dump. |
+| Ecosystem | KUDO Builder; less active. | Kyverno; used by Keptn, OpenFeature, Grafana / OpenTelemetry / Tempo operators, Argo Rollouts Gateway API, and others. |
 
 When adding a new e2e scenario, port it to Chainsaw and drop the equivalent
 KUTTL case in the same PR if the coverage now lives only in Chainsaw.

@@ -273,6 +273,32 @@ The legacy [KUTTL](https://github.com/kudobuilder/kuttl) suites live under
 `tests/e2e/kuttl/tests/` and are exercised via `make e2e-test-kuttl`; they
 remain for parity while we phase Chainsaw in across all scenarios.
 
+### Chainsaw vs KUTTL
+
+Athos was originally scaffolded on KUTTL, which is sufficient for "apply
+this YAML, then check that the resulting StatefulSet has the right name"
+but pushes complex flows into bash inside `commands:` blocks. Chainsaw is
+the Kyverno-maintained successor and addresses the specific gaps that
+hurt Athos most:
+
+| Concern | KUTTL | Chainsaw |
+|---|---|---|
+| Test resource model | Numbered `NN-step.yaml` / `NN-assert.yaml` files in a directory, paired by leading digit. | A single `chainsaw-test.yaml` `Test` resource per directory with named `steps[]`, each carrying `try` / `catch` / `cleanup`. |
+| Array assertions | No way to express "this list is unordered" vs "order matters" — every list match is positional. | Per-field directives so `env:` can match unordered while `initContainers:` stays ordered. |
+| Conditional / comparative assertions | No `>`, `<`, `contains`, partial-object matching; you fall back to shell scripts and `kubectl get -o jsonpath \| grep`. | First-class JMESPath assertions (e.g. `status.(readyReplicas > '0'): true`). |
+| Verifying command output | Plain `commands:` block; output checking is bash plumbing. | Built-in `script:` and `exec:` actions with `check:` assertions on stdout/stderr/exit code. |
+| Timeouts | One global `timeout` per suite. | Per-stage budgets (`apply` / `assert` / `error` / `delete` / `cleanup` / `exec`) at suite, test, and step level. |
+| Error / negative tests | Workarounds via `errors.yaml`. | A first-class `error:` step that asserts a resource is absent or rejected. |
+| Debugging | Suite logs are sparse; you re-run with `--verbose` and read raw events. | Structured per-step logs with begin/end markers and a richer failure dump. |
+| Maintainership | KUDO Builder community; less active. | Kyverno maintainers; ecosystem-aligned with Kyverno policies, used by Keptn, OpenFeature, Grafana / OpenTelemetry / Tempo operators, etc. |
+
+The upstream issue tracking this rationale is
+[kyverno/chainsaw#254](https://github.com/kyverno/chainsaw/discussions/254).
+
+New e2e scenarios should be written in Chainsaw; KUTTL stays in the tree
+only until every scenario has a Chainsaw equivalent, then it will be
+removed in a single follow-up release.
+
 Coverage profiles produced by `make test` are uploaded as `coverage-*.out`
 artifacts on every CI run.
 
