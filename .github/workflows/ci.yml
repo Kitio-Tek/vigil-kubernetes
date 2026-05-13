@@ -125,6 +125,11 @@ jobs:
           chmod +x kubectl-kuttl
           sudo mv kubectl-kuttl /usr/local/bin/
 
+      - name: Install Chainsaw
+        run: |
+          curl -L https://github.com/kyverno/chainsaw/releases/download/v0.2.12/chainsaw_linux_amd64.tar.gz | sudo tar -xz -C /usr/local/bin chainsaw
+          chainsaw version
+
       - name: Build and load operator image
         run: |
           docker build -t ghcr.io/kitio-tek/athos-kubernetes:latest .
@@ -151,3 +156,9 @@ jobs:
       - name: Run KUTTL tests
         run: |
           kubectl kuttl test tests/e2e/kuttl/ --config tests/e2e/kuttl/kuttl-test.yaml
+
+      - name: Run Chainsaw tests
+        run: |
+          chainsaw test \
+            --config tests/e2e/chainsaw/.chainsaw.yaml \
+            tests/e2e/chainsaw/tests/
