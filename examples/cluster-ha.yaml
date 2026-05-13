@@ -1,0 +1,33 @@
+apiVersion: pg.athos.io/v1alpha1
+kind: PostgresCluster
+metadata:
+  name: ha-cluster
+  namespace: default
+spec:
+  postgresVersion: 16
+  instances: 3
+  storage:
+    size: 50Gi
+  resources:
+    requests:
+      cpu: "1"
+      memory: 2Gi
+    limits:
+      cpu: "2"
+      memory: 4Gi
+  topologySpread:
+    enabled: true
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+  postgresParameters:
+    max_connections: "500"
+    shared_buffers: "1GB"
+    effective_cache_size: "3GB"
+    work_mem: "32MB"
+    maintenance_work_mem: "256MB"
+  monitoring:
+    enabled: true
+  backup:
+    enabled: true
+    retentionPolicy: "30d"
+    schedule: "0 2 * * *"
