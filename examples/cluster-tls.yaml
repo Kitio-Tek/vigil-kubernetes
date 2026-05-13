@@ -1,0 +1,17 @@
+apiVersion: pg.athos.io/v1alpha1
+kind: PostgresCluster
+metadata:
+  name: tls-cluster
+  namespace: default
+spec:
+  postgresVersion: 16
+  instances: 2
+  storage:
+    size: 20Gi
+  tls:
+    enabled: true
+    # When omitted, the operator generates a self-signed issuer per cluster.
+    # In production point this at a cert-manager Issuer or ClusterIssuer.
+    issuerRef:
+      kind: ClusterIssuer
+      name: postgres-ca
