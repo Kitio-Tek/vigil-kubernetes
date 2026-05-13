@@ -1,0 +1,7 @@
+addReviewers: true
+addAssignees: false
+
+reviewers:
+  - Kitio-Tek
+
+numberOfReviewers: 1
