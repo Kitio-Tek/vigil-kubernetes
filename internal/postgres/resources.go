@@ -149,7 +149,12 @@ func BuildStatefulSet(cluster *pgv1alpha1.PostgresCluster) *appsv1.StatefulSet {
 			},
 			Env: []corev1.EnvVar{
 				{
-					Name:  "DATA_SOURCE_NAME",
+					Name: "DATA_SOURCE_NAME",
+					// The literal looks like a credentialed URL because postgres_exporter
+					// requires the libpq DSN format, but the password component is the
+					// runtime $(POSTGRES_PASSWORD) variable expanded by the kubelet from
+					// the cluster secret defined below. No password is embedded here.
+					//#nosec G101 -- runtime $(POSTGRES_PASSWORD) expansion, not a literal credential.
 					Value: "postgresql://postgres:$(POSTGRES_PASSWORD)@localhost:5432/postgres?sslmode=disable",
 				},
 				{
