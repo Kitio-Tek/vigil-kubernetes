@@ -6,8 +6,9 @@ branches.
 
 | Version | Supported |
 |---|---|
-| 0.8.x | Yes |
-| 0.7.x | Security fixes only |
+| 0.9.x | Yes |
+| 0.8.x | Security fixes only |
+| 0.7.x | No |
 | 0.6.x | No |
 | 0.5.x | No |
 | 0.4.x | No |

@@ -16,6 +16,7 @@ Latest entry.
 
 | Chart version | Operator version | Min Kubernetes | Notes |
 |---|---|---|---|
+| 0.9.0 | 0.9.0 | 1.25 | Chainsaw e2e suite, CodeQL v4, dep CVE clears |
 | 0.8.1 | 0.8.0 | 1.25 | First chart-museum publish via gh-pages |
 | 0.8.0 | 0.8.0 | 1.25 | Security hardening, sqlescape coverage |
 | 0.7.0 | 0.7.0 | 1.25 | govulncheck wired in CI, PDB verbs widened |
