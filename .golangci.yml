@@ -23,9 +23,11 @@ linters:
     gocyclo:
       min-complexity: 25
     goconst:
-      # Only flag repeated literals that appear five or more times; the
-      # default of three churns on common short strings like "name".
-      min-occurrences: 5
+      # Only flag repeated literals that appear fifteen or more times; the
+      # default of three churns on common short strings like "name", and a
+      # five-occurrence threshold still flags routine domain words such as
+      # "postgres", "cluster" and "namespace" inside Postgres-aware helpers.
+      min-occurrences: 15
     godot:
       scope: declarations
       period: true
@@ -60,6 +62,11 @@ linters:
           - goconst
           - lll
         path: _test\.go
+      # Webhook validators accumulate variable-sized ErrorLists from helper
+      # methods. Preallocation does not buy anything here.
+      - linters:
+          - prealloc
+        path: _webhook\.go
     paths:
       - third_party$
       - builtin$
