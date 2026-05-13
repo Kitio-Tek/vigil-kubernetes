@@ -1,5 +1,9 @@
 name: Security
 
+# Runs on the default branch, on PRs into it, and weekly on a schedule. The
+# advisory nature of govulncheck means we keep `continue-on-error: true` on
+# that job so a fresh stdlib advisory does not page maintainers via the
+# default Actions failure email.
 on:
   push:
     branches: ["main"]
@@ -7,6 +11,7 @@ on:
     branches: ["main"]
   schedule:
     - cron: "0 6 * * 1"
+  workflow_dispatch: {}
 
 permissions:
   contents: read
