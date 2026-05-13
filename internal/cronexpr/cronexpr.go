@@ -96,39 +96,52 @@ func validateAtom(p string, min, max int) error {
 	if p == "*" {
 		return nil
 	}
-	if i := strings.Index(p, "/"); i >= 0 {
-		left := p[:i]
-		right := p[i+1:]
-		if left == "" || right == "" {
-			return fmt.Errorf("invalid step %q", p)
-		}
-		// Left side is either "*" or a range.
-		if left != "*" {
-			if err := validateAtom(left, min, max); err != nil {
-				return err
-			}
-		}
-		n, err := strconv.Atoi(right)
-		if err != nil || n <= 0 {
-			return fmt.Errorf("invalid step %q", p)
-		}
-		return nil
+	if strings.Contains(p, "/") {
+		return validateStepAtom(p, min, max)
 	}
-	if i := strings.Index(p, "-"); i >= 0 {
-		left, right := p[:i], p[i+1:]
-		a, err := strconv.Atoi(left)
-		if err != nil {
-			return fmt.Errorf("invalid range bound %q", left)
-		}
-		b, err := strconv.Atoi(right)
-		if err != nil {
-			return fmt.Errorf("invalid range bound %q", right)
-		}
-		if a < min || b > max || a > b {
-			return fmt.Errorf("range %d-%d outside [%d,%d]", a, b, min, max)
-		}
-		return nil
+	if strings.Contains(p, "-") {
+		return validateRangeAtom(p, min, max)
 	}
+	return validateSingleValue(p, min, max)
+}
+
+func validateStepAtom(p string, min, max int) error {
+	i := strings.Index(p, "/")
+	left := p[:i]
+	right := p[i+1:]
+	if left == "" || right == "" {
+		return fmt.Errorf("invalid step %q", p)
+	}
+	if left != "*" {
+		if err := validateAtom(left, min, max); err != nil {
+			return err
+		}
+	}
+	n, err := strconv.Atoi(right)
+	if err != nil || n <= 0 {
+		return fmt.Errorf("invalid step %q", p)
+	}
+	return nil
+}
+
+func validateRangeAtom(p string, min, max int) error {
+	i := strings.Index(p, "-")
+	left, right := p[:i], p[i+1:]
+	a, err := strconv.Atoi(left)
+	if err != nil {
+		return fmt.Errorf("invalid range bound %q", left)
+	}
+	b, err := strconv.Atoi(right)
+	if err != nil {
+		return fmt.Errorf("invalid range bound %q", right)
+	}
+	if a < min || b > max || a > b {
+		return fmt.Errorf("range %d-%d outside [%d,%d]", a, b, min, max)
+	}
+	return nil
+}
+
+func validateSingleValue(p string, min, max int) error {
 	n, err := strconv.Atoi(p)
 	if err != nil {
 		return fmt.Errorf("invalid value %q", p)
